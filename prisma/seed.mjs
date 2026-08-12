@@ -925,8 +925,8 @@ async function main() {
   await prisma.riskEventEvidence.deleteMany();
   await prisma.riskEventRuleMatch.deleteMany();
   await prisma.ingestionRequestAudit.deleteMany();
-  await prisma.aiCallLog.deleteMany();
   await prisma.riskEvent.deleteMany();
+  await prisma.aiCallLog.deleteMany();
   await prisma.applicationCredential.deleteMany();
   await prisma.integrationValidationCheck.deleteMany();
   await prisma.applicationEnvironment.deleteMany();
@@ -1102,36 +1102,36 @@ async function main() {
     });
   }
 
-  for (const [id, traceId, riskEventId, applicationId, occurredAt, userRef, model, environment, score, level, action, prompt, output, ragContext, toolCall] of seededCallLogs) {
-    await prisma.aiCallLog.create({
-      data: {
-        id,
-        traceId,
-        applicationId,
-        occurredAt: new Date(occurredAt),
-        userRef,
-        model,
-        environment,
-        score,
-        level,
-        action,
-        prompt,
-        output,
-        ragContext,
-        toolCall,
-      },
-    });
-  }
+  await prisma.aiCallLog.createMany({
+    data: seededCallLogs.map(([id, traceId, , applicationId, occurredAt, userRef, model, environment, score, level, action, prompt, output, ragContext, toolCall]) => ({
+      id,
+      traceId,
+      applicationId,
+      occurredAt: new Date(occurredAt),
+      userRef,
+      model,
+      environment,
+      score,
+      level,
+      action,
+      prompt,
+      output,
+      ragContext,
+      toolCall,
+    })),
+  });
 
-  for (const event of seededRiskEvents) {
-    const sourceCallLog = seededCallLogs.find(([, , riskEventId]) => riskEventId === event.id);
+  const sourceCallLogsByRiskEventId = new Map(seededCallLogs.filter(([, , riskEventId]) => riskEventId).map((callLog) => [callLog[2], callLog]));
 
-    if (!sourceCallLog) {
-      throw new Error(`Risk event ${event.id} does not have a seeded source call log.`);
-    }
+  await prisma.riskEvent.createMany({
+    data: seededRiskEvents.map((event) => {
+      const sourceCallLog = sourceCallLogsByRiskEventId.get(event.id);
 
-    await prisma.riskEvent.create({
-      data: {
+      if (!sourceCallLog) {
+        throw new Error(`Risk event ${event.id} does not have a seeded source call log.`);
+      }
+
+      return {
         id: event.id,
         applicationId: event.applicationId,
         sourceCallLogId: sourceCallLog[0],
@@ -1151,70 +1151,76 @@ async function main() {
         affectedAsset: event.affectedAsset,
         recommendation: event.recommendation,
         updatedAt: new Date(event.updatedAt),
-        ruleMatches: {
-          create: event.rules.map((riskRuleId) => ({
-            id: `${event.id}-${riskRuleId}`,
-            riskRule: { connect: { id: riskRuleId } },
-          })),
-        },
-        evidence: {
-          create: event.evidence.map(([riskRuleId, signal, evidence, impact], index) => ({
-            id: `${event.id}-evidence-${index + 1}`,
-            riskRuleId,
-            signal,
-            evidence,
-            impact,
-          })),
-        },
-      },
-    });
-  }
+      };
+    }),
+  });
 
-  for (const [
-    id,
-    occurredAt,
-    status,
-    authMode,
-    ingestionSource,
-    applicationId,
-    credentialId,
-    traceId,
-    sessionId,
-    requestProfile,
-    httpStatus,
-    errorCode,
-    errorMessage,
-    latencyMs,
-    callLogId,
-    riskEventId,
-    model,
-    environment,
-    dataProtectionMode,
-  ] of seededIngestionRequestAudits) {
-    await prisma.ingestionRequestAudit.create({
-      data: {
-        id,
-        occurredAt: new Date(occurredAt),
-        status,
-        authMode,
-        ingestionSource,
-        applicationId,
-        credentialId,
-        traceId,
-        sessionId,
-        requestProfile,
-        httpStatus,
-        errorCode,
-        errorMessage,
-        latencyMs,
-        callLogId,
-        riskEventId,
-        model,
-        environment,
-        dataProtectionMode,
-      },
-    });
-  }
+  await prisma.riskEventRuleMatch.createMany({
+    data: seededRiskEvents.flatMap((event) =>
+      event.rules.map((riskRuleId) => ({
+        id: `${event.id}-${riskRuleId}`,
+        riskEventId: event.id,
+        riskRuleId,
+      })),
+    ),
+  });
+
+  await prisma.riskEventEvidence.createMany({
+    data: seededRiskEvents.flatMap((event) =>
+      event.evidence.map(([riskRuleId, signal, evidence, impact], index) => ({
+        id: `${event.id}-evidence-${index + 1}`,
+        riskEventId: event.id,
+        riskRuleId,
+        signal,
+        evidence,
+        impact,
+      })),
+    ),
+  });
+
+  await prisma.ingestionRequestAudit.createMany({
+    data: seededIngestionRequestAudits.map(([
+      id,
+      occurredAt,
+      status,
+      authMode,
+      ingestionSource,
+      applicationId,
+      credentialId,
+      traceId,
+      sessionId,
+      requestProfile,
+      httpStatus,
+      errorCode,
+      errorMessage,
+      latencyMs,
+      callLogId,
+      riskEventId,
+      model,
+      environment,
+      dataProtectionMode,
+    ]) => ({
+      id,
+      occurredAt: new Date(occurredAt),
+      status,
+      authMode,
+      ingestionSource,
+      applicationId,
+      credentialId,
+      traceId,
+      sessionId,
+      requestProfile,
+      httpStatus,
+      errorCode,
+      errorMessage,
+      latencyMs,
+      callLogId,
+      riskEventId,
+      model,
+      environment,
+      dataProtectionMode,
+    })),
+  });
 }
 
 main()
