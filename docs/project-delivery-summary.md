@@ -114,7 +114,7 @@ The first version focuses on making risk visible and explainable. Governance lea
 ## Next Priorities
 
 1. Add basic production authentication to replace demo profile switching.
-2. Harden ingestion credentials and prepare real model-call ingestion examples.
-3. Add a small integration guide for connecting an LLM application to `POST /api/ingest/model-call`.
-4. Add lightweight tests for core API routes and permission-scoped reads.
-5. Rotate setup-time database credentials before ingesting any real sensitive data.
+2. Harden ingestion credentials and run a small real model-call ingestion pilot.
+3. Add lightweight tests for core API routes and permission-scoped reads.
+4. Rotate setup-time database credentials before ingesting any real sensitive data.
+5. Decide whether to expose ingestion audit records in the Admin UI.

@@ -73,18 +73,22 @@ Completed first deployment steps:
 
 ## 5. Minimum Real Data Ingestion Steps
 
+Detailed implementation guidance is available in [Real Data Ingestion Guide](real-data-ingestion-guide.md).
+
 1. Create or use an application in Admin / Application Setup.
 2. Generate an application credential.
-3. Send model-call records to:
+3. Store the raw credential secret in the source application's secret manager.
+4. Send model-call records to:
 
 ```text
 POST /api/ingest/model-call
 Authorization: Bearer <application_api_key>
 ```
 
-4. Confirm the call appears in Call Logs.
-5. Confirm any generated risk event appears in Risk Events.
-6. Confirm Overview and Risk Analytics metrics update from the ingested record.
+5. Confirm the call appears in Call Logs.
+6. Confirm any generated risk event appears in Risk Events.
+7. Confirm Overview and Risk Analytics metrics update from the ingested record.
+8. Confirm ingestion audit records for both success and expected failure cases.
 
 ## 6. Recommended V1 Database Decision
 
@@ -110,11 +114,12 @@ Supabase can be reconsidered later if the product needs built-in auth, storage, 
 
 ## 8. Immediate Next Step
 
-1. Rotate the Neon database password.
-2. Update Vercel `DATABASE_URL`.
-3. Update local `.env`.
+1. Rotate the Neon database password before ingesting real sensitive data.
+2. Generate one application credential for a test integration.
+3. Send 10 to 20 test model-call records to `POST /api/ingest/model-call`.
 4. Re-run production smoke checks against:
    - `https://ai-riskops.vercel.app`
    - `https://ai-riskops.vercel.app/api/overview/summary`
    - `https://ai-riskops.vercel.app/api/applications`
    - `https://ai-riskops.vercel.app/api/risk-events`
+5. Verify Call Logs, Risk Events, Risk Analytics, and ingestion audit behavior from the ingested sample.

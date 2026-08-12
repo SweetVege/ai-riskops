@@ -197,6 +197,7 @@ https://ai-riskops.vercel.app
 - [Living PRD](docs/living-prd.md)
 - [Backend Readiness](docs/backend-readiness.md)
 - [API Contract](docs/api-contract.md)
+- [Real Data Ingestion Guide](docs/real-data-ingestion-guide.md)
 - [Authentication And Permission Design](docs/auth-permission-design.md)
 - [Online Launch Plan](docs/online-launch-plan.md)
 - [Demo Script](docs/demo-script.md)
