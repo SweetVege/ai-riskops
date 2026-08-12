@@ -1,5 +1,6 @@
 import { apiOk } from "@/lib/api/response";
 import { dataProtectionMeta, protectCapturedFields } from "@/lib/api/data-protection";
+import { paginationFromSearchParams, paginationResponse } from "@/lib/api/pagination";
 import { resolveRequestScope, scopedCallLogWhere, scopeResponse } from "@/lib/api/scope";
 import { prisma } from "@/lib/prisma";
 
@@ -14,44 +15,52 @@ export async function GET(request: Request) {
   const action = searchParams.get("action");
   const hasEvent = searchParams.get("has_event");
   const q = searchParams.get("q")?.trim();
+  const pagination = paginationFromSearchParams(searchParams);
 
-  const callLogs = await prisma.aiCallLog.findMany({
-    where: {
-      ...scopedCallLogWhere(scope, applicationId),
-      ...(environment ? { environment } : {}),
-      ...(level ? { level } : {}),
-      ...(action ? { action } : {}),
-      ...(hasEvent === "true" ? { riskEvent: { isNot: null } } : {}),
-      ...(hasEvent === "false" ? { riskEvent: { is: null } } : {}),
-      ...(q
-        ? {
-            OR: [
-              { traceId: { contains: q } },
-              { userRef: { contains: q } },
-              { model: { contains: q } },
-              { prompt: { contains: q } },
-              { output: { contains: q } },
-              { ragContext: { contains: q } },
-              { toolCall: { contains: q } },
-              { application: { name: { contains: q } } },
-            ],
-          }
-        : {}),
-    },
-    orderBy: { occurredAt: "desc" },
-    include: {
-      application: true,
-      riskEvent: {
-        include: {
-          ruleMatches: {
-            include: {
-              riskRule: true,
+  const where = {
+    ...scopedCallLogWhere(scope, applicationId),
+    ...(environment ? { environment } : {}),
+    ...(level ? { level } : {}),
+    ...(action ? { action } : {}),
+    ...(hasEvent === "true" ? { riskEvent: { isNot: null } } : {}),
+    ...(hasEvent === "false" ? { riskEvent: { is: null } } : {}),
+    ...(q
+      ? {
+          OR: [
+            { traceId: { contains: q } },
+            { userRef: { contains: q } },
+            { model: { contains: q } },
+            { prompt: { contains: q } },
+            { output: { contains: q } },
+            { ragContext: { contains: q } },
+            { toolCall: { contains: q } },
+            { application: { name: { contains: q } } },
+          ],
+        }
+      : {}),
+  };
+
+  const [totalItems, callLogs] = await Promise.all([
+    prisma.aiCallLog.count({ where }),
+    prisma.aiCallLog.findMany({
+      where,
+      orderBy: { occurredAt: "desc" },
+      skip: pagination.skip,
+      take: pagination.take,
+      include: {
+        application: true,
+        riskEvent: {
+          include: {
+            ruleMatches: {
+              include: {
+                riskRule: true,
+              },
             },
           },
         },
       },
-    },
-  });
+    }),
+  ]);
 
   return apiOk({
     scope: scopeResponse(scope),
@@ -63,6 +72,11 @@ export async function GET(request: Request) {
       hasEvent,
       q,
     },
+    pagination: paginationResponse({
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      totalItems,
+    }),
     data: callLogs.map((log) => {
       const protectedFields = protectCapturedFields(log);
 

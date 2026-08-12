@@ -1220,6 +1220,15 @@ type DataProtectionApi = {
   appliedFindings: string[];
 };
 
+type PaginationApi = {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
 type RiskEventDetailApi = RiskEventListItemApi & {
   riskExplanation: string;
   recommendation: string;
@@ -3386,6 +3395,8 @@ function RiskEventsWorkbench({
   const [reviewFilter, setReviewFilter] = useState(() => readInitialRiskEventFilters().reviewStatus);
   const [applicationIdFilter, setApplicationIdFilter] = useState(() => readInitialRiskEventFilters().applicationId);
   const [environmentFilter, setEnvironmentFilter] = useState(() => readInitialRiskEventFilters().environment);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pagination, setPagination] = useState<PaginationApi | null>(null);
   const [drillThroughLabel, setDrillThroughLabel] = useState(() => {
     const initialFilters = readInitialRiskEventFilters();
     return initialFilters.source && initialFilters.label
@@ -3455,7 +3466,12 @@ function RiskEventsWorkbench({
     setApplicationIdFilter(drillThroughFilters.applicationId ?? "");
     setEnvironmentFilter(drillThroughFilters.environment?.toLowerCase() ?? "");
     setDrillThroughLabel(`${drillThroughFilters.source}: ${drillThroughFilters.label}`);
+    setPageNumber(1);
   }, [drillThroughFilters]);
+
+  useEffect(() => {
+    setPageNumber(1);
+  }, [actionFilter, applicationIdFilter, environmentFilter, levelFilter, reviewFilter, searchQuery]);
 
   useEffect(() => {
     const params = readCurrentSearchParams();
@@ -3502,6 +3518,8 @@ function RiskEventsWorkbench({
   useEffect(() => {
     const controller = new AbortController();
     const params = new URLSearchParams({ profile: profileQueryValue(currentProfile) });
+    params.set("page_number", `${pageNumber}`);
+    params.set("page_size", "50");
 
     if (levelFilter !== "All") params.set("level", levelFilter);
     if (actionFilter !== "All") params.set("action", actionFilter);
@@ -3521,9 +3539,13 @@ function RiskEventsWorkbench({
           throw new Error("Unable to load risk events");
         }
 
-        const payload = (await response.json()) as { data: RiskEventListItemApi[] };
+        const payload = (await response.json()) as {
+          data: RiskEventListItemApi[];
+          pagination?: PaginationApi;
+        };
         const mappedEvents = payload.data.map(mapRiskEventListItem);
         setEvents(mappedEvents);
+        setPagination(payload.pagination ?? null);
 
         if (mappedEvents.length && !mappedEvents.some((event) => event.id === selectedId)) {
           onSelect(mappedEvents[0].id);
@@ -3532,6 +3554,7 @@ function RiskEventsWorkbench({
         if ((requestError as Error).name !== "AbortError") {
           setListError("Unable to load risk events from the backend API.");
           setEvents([]);
+          setPagination(null);
           setDetailEvent(null);
         }
       } finally {
@@ -3551,6 +3574,7 @@ function RiskEventsWorkbench({
     environmentFilter,
     levelFilter,
     onSelect,
+    pageNumber,
     reviewFilter,
     searchQuery,
     selectedId,
@@ -3689,7 +3713,11 @@ function RiskEventsWorkbench({
     setApplicationIdFilter("");
     setEnvironmentFilter("");
     setDrillThroughLabel("");
+    setPageNumber(1);
   };
+  const pageSummary = pagination
+    ? `${events.length} shown · ${pagination.totalItems} total`
+    : `${events.length} shown`;
 
   return (
     <div className="p-6">
@@ -3735,7 +3763,7 @@ function RiskEventsWorkbench({
                 </p>
               </div>
               <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
-                {isListLoading ? "Loading..." : `${events.length} shown`}
+                {isListLoading ? "Loading..." : pageSummary}
               </span>
             </div>
             <div className="mt-4 grid grid-cols-[118px_132px_156px_92px] gap-3">
@@ -3911,6 +3939,31 @@ function RiskEventsWorkbench({
                 <p className="mt-1 text-xs text-slate-500">Adjust the search or filter controls.</p>
               </div>
             )}
+            {pagination && pagination.totalItems > pagination.pageSize ? (
+              <div className="flex items-center justify-between border-t border-line px-4 py-3 text-xs text-slate-500">
+                <span>
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPageNumber((currentPage) => Math.max(1, currentPage - 1))}
+                    disabled={!pagination.hasPreviousPage || isListLoading}
+                    className="h-8 rounded-lg border border-line bg-white px-3 font-medium text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPageNumber((currentPage) => currentPage + 1)}
+                    disabled={!pagination.hasNextPage || isListLoading}
+                    className="h-8 rounded-lg border border-line bg-white px-3 font-medium text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            ) : null}
           </div>
         </section>
 
@@ -3966,6 +4019,8 @@ function CallLogsView({
   const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
   const [detailError, setDetailError] = useState<string | null>(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pagination, setPagination] = useState<PaginationApi | null>(null);
   const selectedLog = detailLog ?? logs.find((log) => log.id === selectedLogId) ?? logs[0];
 
   useEffect(() => {
@@ -3977,14 +4032,23 @@ function CallLogsView({
 
       try {
         const profile = profileQueryValue(currentProfile);
-        const response = await fetch(`/api/call-logs?profile=${profile}`, {
+        const params = new URLSearchParams({
+          profile,
+          page_number: `${pageNumber}`,
+          page_size: "50",
+        });
+        const response = await fetch(`/api/call-logs?${params.toString()}`, {
           signal: controller.signal,
         });
         if (!response.ok) throw new Error("Unable to load call logs.");
 
-        const payload = (await response.json()) as { data: CallLogListItemApi[] };
+        const payload = (await response.json()) as {
+          data: CallLogListItemApi[];
+          pagination?: PaginationApi;
+        };
         const nextLogs = payload.data.map(mapCallLogListItem);
         setLogs(nextLogs);
+        setPagination(payload.pagination ?? null);
 
         if (nextLogs.length && !nextLogs.some((log) => log.id === selectedLogId)) {
           onSelect(nextLogs[0].id);
@@ -3993,6 +4057,7 @@ function CallLogsView({
         if (error instanceof DOMException && error.name === "AbortError") return;
         setListError(error instanceof Error ? error.message : "Unable to load call logs.");
         setLogs([]);
+        setPagination(null);
       } finally {
         setIsListLoading(false);
       }
@@ -4001,7 +4066,7 @@ function CallLogsView({
     loadCallLogs();
 
     return () => controller.abort();
-  }, [currentProfile, onSelect, selectedLogId]);
+  }, [currentProfile, onSelect, pageNumber, selectedLogId]);
 
   useEffect(() => {
     if (!selectedLogId) {
@@ -4050,7 +4115,7 @@ function CallLogsView({
       <section className="grid grid-cols-4 gap-4">
         <StatCard
           title="Total Logs"
-          value={`${logs.length}`}
+          value={`${pagination?.totalItems ?? logs.length}`}
           delta="Model request logs in the current access scope"
           icon={ClipboardList}
           tone="bg-cyan-50 text-cyan-700"
@@ -4086,6 +4151,11 @@ function CallLogsView({
                 <h2 className="text-base font-semibold text-ink">AI Call Logs</h2>
                 <p className="text-xs text-slate-500">
                   Trace each model request, system action, and linked risk event
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  {pagination
+                    ? `${logs.length} shown · ${pagination.totalItems} total · Page ${pagination.page} of ${pagination.totalPages}`
+                    : `${logs.length} shown`}
                 </p>
               </div>
               <button className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-white px-3 text-sm text-slate-600 hover:bg-slate-50">
@@ -4125,6 +4195,31 @@ function CallLogsView({
                 </div>
               )}
             </div>
+            {pagination && pagination.totalItems > pagination.pageSize ? (
+              <div className="flex items-center justify-between border-t border-line px-4 py-3 text-xs text-slate-500">
+                <span>
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPageNumber((currentPage) => Math.max(1, currentPage - 1))}
+                    disabled={!pagination.hasPreviousPage || isListLoading}
+                    className="h-8 rounded-lg border border-line bg-white px-3 font-medium text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPageNumber((currentPage) => currentPage + 1)}
+                    disabled={!pagination.hasNextPage || isListLoading}
+                    className="h-8 rounded-lg border border-line bg-white px-3 font-medium text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            ) : null}
           </section>
         </div>
 

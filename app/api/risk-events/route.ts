@@ -1,4 +1,5 @@
 import { apiOk } from "@/lib/api/response";
+import { paginationFromSearchParams, paginationResponse } from "@/lib/api/pagination";
 import { resolveRequestScope, scopedRiskEventWhere, scopeResponse } from "@/lib/api/scope";
 import { prisma } from "@/lib/prisma";
 
@@ -13,52 +14,60 @@ export async function GET(request: Request) {
   const applicationId = searchParams.get("application_id");
   const environment = searchParams.get("environment");
   const q = searchParams.get("q")?.trim();
+  const pagination = paginationFromSearchParams(searchParams);
 
-  const riskEvents = await prisma.riskEvent.findMany({
-    where: {
-      ...scopedRiskEventWhere(scope, applicationId),
-      ...(level ? { level } : {}),
-      ...(action ? { action } : {}),
-      ...(reviewStatus ? { reviewStatus } : {}),
-      ...(environment ? { environment } : {}),
-      ...(q
-        ? {
-            OR: [
-              { title: { contains: q } },
-              { userRef: { contains: q } },
-              { department: { contains: q } },
-              { riskExplanation: { contains: q } },
-              { recommendation: { contains: q } },
-              { application: { name: { contains: q } } },
-              {
-                ruleMatches: {
-                  some: {
-                    riskRule: {
-                      OR: [
-                        { id: { contains: q } },
-                        { name: { contains: q } },
-                        { category: { contains: q } },
-                      ],
-                    },
+  const where = {
+    ...scopedRiskEventWhere(scope, applicationId),
+    ...(level ? { level } : {}),
+    ...(action ? { action } : {}),
+    ...(reviewStatus ? { reviewStatus } : {}),
+    ...(environment ? { environment } : {}),
+    ...(q
+      ? {
+          OR: [
+            { title: { contains: q } },
+            { userRef: { contains: q } },
+            { department: { contains: q } },
+            { riskExplanation: { contains: q } },
+            { recommendation: { contains: q } },
+            { application: { name: { contains: q } } },
+            {
+              ruleMatches: {
+                some: {
+                  riskRule: {
+                    OR: [
+                      { id: { contains: q } },
+                      { name: { contains: q } },
+                      { category: { contains: q } },
+                    ],
                   },
                 },
               },
-            ],
-          }
-        : {}),
-    },
-    orderBy: { occurredAt: "desc" },
-    include: {
-      application: true,
-      ruleMatches: {
-        include: {
-          riskRule: true,
+            },
+          ],
+        }
+      : {}),
+  };
+
+  const [totalItems, riskEvents] = await Promise.all([
+    prisma.riskEvent.count({ where }),
+    prisma.riskEvent.findMany({
+      where,
+      orderBy: { occurredAt: "desc" },
+      skip: pagination.skip,
+      take: pagination.take,
+      include: {
+        application: true,
+        ruleMatches: {
+          include: {
+            riskRule: true,
+          },
         },
+        evidence: true,
+        sourceCallLog: true,
       },
-      evidence: true,
-      sourceCallLog: true,
-    },
-  });
+    }),
+  ]);
 
   return apiOk({
     scope: scopeResponse(scope),
@@ -70,6 +79,11 @@ export async function GET(request: Request) {
       environment,
       q,
     },
+    pagination: paginationResponse({
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      totalItems,
+    }),
     data: riskEvents.map((event) => ({
       id: event.id,
       occurredAt: event.occurredAt.toISOString(),
