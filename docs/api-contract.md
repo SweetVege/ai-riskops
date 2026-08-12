@@ -2,7 +2,7 @@
 
 This document describes the current backend API contract for AI RiskOps.
 
-It reflects the working prototype backend as of Backend V1.5 API Contract Documentation. The API is implemented with Next.js route handlers, Prisma, and SQLite seed data. It is not yet a public production API specification.
+It reflects the working prototype backend as of Backend V1.5 API Contract Documentation. The API is implemented with Next.js route handlers, Prisma, and Postgres-backed seed data. It is not yet a public production API specification.
 
 ## 1. Contract Principles
 
@@ -20,6 +20,12 @@ Local development:
 
 ```text
 http://127.0.0.1:3000
+```
+
+Production demo:
+
+```text
+https://ai-riskops.vercel.app
 ```
 
 All endpoints below are relative to this base URL.

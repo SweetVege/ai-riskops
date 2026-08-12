@@ -2,7 +2,7 @@
 
 This document defines the minimum work required to put AI RiskOps on GitHub, deploy it online, and start ingesting real model-call data.
 
-The current priority is launch readiness, not additional product feature expansion.
+The first online launch path has been completed with GitHub, Vercel, and Neon Postgres. The current priority is launch hardening, real ingestion readiness, and secret hygiene, not additional frontend-only feature expansion.
 
 ## 1. Recommended Launch Path
 
@@ -30,12 +30,20 @@ Ready:
 - Admin access audit logs exist.
 - Prisma schema has been moved to Postgres.
 - Runtime Prisma client uses the Postgres adapter.
+- GitHub repository is connected.
+- Vercel production deployment is live.
+- Neon Postgres is configured as the persistent database.
+- Core production APIs have been verified online:
+  - `/api/overview/summary`
+  - `/api/applications`
+  - `/api/risk-events`
 
-Still required for real persistent online data:
+Still required before real sensitive production data:
 
-- Neon database must be provisioned.
-- `DATABASE_URL` must be configured locally and in Vercel.
-- `pnpm run db:reset` must be run against the selected Neon database before demo use.
+- Rotate setup-time database credentials.
+- Update `DATABASE_URL` in Vercel after credential rotation.
+- Update local `.env` after credential rotation.
+- Confirm ingestion credentials and audit logs in the deployed environment.
 - Demo User Profile switching is still the human access mechanism.
 
 ## 3. Minimum GitHub Steps
@@ -49,12 +57,14 @@ Still required for real persistent online data:
 
 ## 4. Minimum Deployment Steps
 
-1. Create a Neon Postgres database.
-2. Configure `DATABASE_URL` locally and in Vercel.
-3. Run `pnpm run db:reset` against Neon.
-4. Deploy to Vercel.
-5. Confirm the GitHub Actions and Vercel builds pass.
-6. Verify:
+Completed first deployment steps:
+
+1. Created a Neon Postgres database.
+2. Configured `DATABASE_URL` locally and in Vercel.
+3. Ran `pnpm run db:reset` against Neon.
+4. Deployed to Vercel.
+5. Confirmed the Vercel build passes.
+6. Verified:
    - `/`
    - `/api/session`
    - `/api/overview/summary`
@@ -100,15 +110,11 @@ Supabase can be reconsidered later if the product needs built-in auth, storage, 
 
 ## 8. Immediate Next Step
 
-Create a Neon Postgres project and provide:
-
-```text
-DATABASE_URL
-```
-
-Then run:
-
-```bash
-pnpm run db:reset
-pnpm build
-```
+1. Rotate the Neon database password.
+2. Update Vercel `DATABASE_URL`.
+3. Update local `.env`.
+4. Re-run production smoke checks against:
+   - `https://ai-riskops.vercel.app`
+   - `https://ai-riskops.vercel.app/api/overview/summary`
+   - `https://ai-riskops.vercel.app/api/applications`
+   - `https://ai-riskops.vercel.app/api/risk-events`
