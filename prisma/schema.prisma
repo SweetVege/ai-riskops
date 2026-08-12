@@ -1,0 +1,322 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id          String                  @id
+  email       String                  @unique
+  name        String
+  profiles    UserProfileAssignment[]
+  applicationAccess UserApplicationAccess[]
+  permissionSets UserPermissionSetAssignment[]
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+}
+
+model UserProfileAssignment {
+  id        String   @id
+  userId    String
+  profile   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([profile])
+}
+
+model PermissionSet {
+  id          String                        @id
+  name        String
+  description String
+  dataScope   String
+  capabilities PermissionSetCapability[]
+  assignments UserPermissionSetAssignment[]
+  createdAt   DateTime                      @default(now())
+  updatedAt   DateTime                      @updatedAt
+
+  @@index([dataScope])
+}
+
+model PermissionSetCapability {
+  id              String        @id
+  permissionSetId String
+  capability      String
+  permissionSet   PermissionSet @relation(fields: [permissionSetId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+
+  @@unique([permissionSetId, capability])
+  @@index([capability])
+}
+
+model UserPermissionSetAssignment {
+  id              String        @id
+  userId          String
+  permissionSetId String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissionSet   PermissionSet @relation(fields: [permissionSetId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+
+  @@unique([userId, permissionSetId])
+  @@index([permissionSetId])
+}
+
+model UserApplicationAccess {
+  id            String      @id
+  userId        String
+  applicationId String
+  permission    String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+
+  @@unique([userId, applicationId])
+  @@index([applicationId])
+  @@index([permission])
+}
+
+model AccessAuditLog {
+  id                       String   @id
+  occurredAt               DateTime @default(now())
+  action                   String
+  actorUserId              String
+  actorProfile             String?
+  targetUserId             String
+  previousPermissionSetId  String?
+  previousPermissionSetName String?
+  nextPermissionSetId      String?
+  nextPermissionSetName    String?
+  previousApplicationIds   String
+  nextApplicationIds       String
+
+  @@index([occurredAt])
+  @@index([actorUserId])
+  @@index([targetUserId])
+  @@index([action])
+}
+
+model Application {
+  id                String                       @id
+  name              String
+  slug              String                       @unique
+  ownerTeam         String
+  status            String
+  policyTemplateId  String?
+  integrationMethod String
+  fieldCoverage     Int
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
+  policyTemplate    PolicyTemplate?             @relation(fields: [policyTemplateId], references: [id])
+  environments      ApplicationEnvironment[]
+  validationChecks  IntegrationValidationCheck[]
+  credentials       ApplicationCredential[]
+  ingestionAudits   IngestionRequestAudit[]
+  callLogs          AiCallLog[]
+  riskEvents        RiskEvent[]
+  userAccess        UserApplicationAccess[]
+}
+
+model ApplicationCredential {
+  id                String      @id
+  applicationId     String
+  keyPrefix         String
+  keyHash           String
+  status            String
+  integrationSource String
+  createdBy         String
+  lastUsedAt        DateTime?
+  createdAt         DateTime    @default(now())
+  rotatedAt         DateTime?
+  revokedAt         DateTime?
+  application       Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  ingestionAudits   IngestionRequestAudit[]
+
+  @@index([applicationId])
+  @@index([status])
+  @@index([integrationSource])
+  @@unique([keyPrefix])
+  @@unique([keyHash])
+}
+
+model IngestionRequestAudit {
+  id                 String                 @id
+  occurredAt         DateTime               @default(now())
+  status             String
+  authMode           String
+  ingestionSource    String
+  applicationId      String?
+  credentialId       String?
+  traceId            String?
+  sessionId          String?
+  requestProfile     String?
+  httpStatus         Int
+  errorCode          String?
+  errorMessage       String?
+  latencyMs          Int
+  callLogId          String?
+  riskEventId        String?
+  model              String?
+  environment        String?
+  dataProtectionMode String?
+  application        Application?           @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  credential         ApplicationCredential? @relation(fields: [credentialId], references: [id], onDelete: SetNull)
+
+  @@index([occurredAt])
+  @@index([status])
+  @@index([applicationId])
+  @@index([credentialId])
+  @@index([traceId])
+  @@index([errorCode])
+}
+
+model ApplicationEnvironment {
+  id            String      @id
+  applicationId String
+  name          String
+  status        String
+  callsToday    Int
+  lastSeenAt    DateTime?
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+}
+
+model IntegrationValidationCheck {
+  id            String      @id
+  applicationId String
+  checkKey      String
+  label         String
+  status        String
+  updatedAt     DateTime    @updatedAt
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, checkKey])
+}
+
+model PolicyTemplate {
+  id             String               @id
+  name           String
+  scope          String
+  defaultAction  String
+  thresholds     String
+  enabled        Boolean
+  applications   Application[]
+  policyRules    PolicyRule[]
+}
+
+model RiskRule {
+  id             String                  @id
+  name           String
+  category       String
+  trigger        String
+  baseScore      Int
+  defaultAction  String
+  iconName       String
+  matches        RiskEventRuleMatch[]
+  policyRules    PolicyRule[]
+  operationalStat RuleOperationalStat?
+}
+
+model PolicyRule {
+  id               String         @id
+  policyTemplateId String
+  riskRuleId       String
+  enabled          Boolean        @default(true)
+  thresholdOverride Int?
+  actionOverride   String?
+  policyTemplate   PolicyTemplate @relation(fields: [policyTemplateId], references: [id], onDelete: Cascade)
+  riskRule         RiskRule       @relation(fields: [riskRuleId], references: [id], onDelete: Cascade)
+
+  @@unique([policyTemplateId, riskRuleId])
+  @@index([enabled])
+}
+
+model RuleOperationalStat {
+  id                         String   @id
+  riskRuleId                 String   @unique
+  enabled                    Boolean
+  hits24h                    Int
+  reviewedFalsePositiveRate  Float
+  riskRule                   RiskRule @relation(fields: [riskRuleId], references: [id], onDelete: Cascade)
+}
+
+model AiCallLog {
+  id            String       @id
+  traceId       String
+  applicationId String
+  occurredAt    DateTime
+  userRef       String
+  model         String
+  environment   String
+  score         Int
+  level         String
+  action        String
+  prompt        String
+  output        String
+  ragContext    String
+  toolCall      String?
+  application   Application  @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  riskEvent     RiskEvent?
+
+  @@index([applicationId])
+  @@index([occurredAt])
+}
+
+model RiskEvent {
+  id              String               @id
+  applicationId   String
+  sourceCallLogId String               @unique
+  occurredAt      DateTime
+  title           String
+  userRef         String
+  department      String
+  model           String
+  environment     String
+  score           Int
+  level           String
+  action          String
+  reviewStatus    String
+  owner           String
+  sla             String
+  riskExplanation String
+  affectedAsset   String?
+  recommendation  String
+  updatedAt       DateTime
+  application     Application          @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  sourceCallLog   AiCallLog            @relation(fields: [sourceCallLogId], references: [id], onDelete: Restrict)
+  ruleMatches     RiskEventRuleMatch[]
+  evidence        RiskEventEvidence[]
+
+  @@index([applicationId])
+  @@index([sourceCallLogId])
+  @@index([occurredAt])
+  @@index([level])
+  @@index([action])
+  @@index([reviewStatus])
+}
+
+model RiskEventRuleMatch {
+  id          String    @id
+  riskEventId String
+  riskRuleId  String
+  riskEvent   RiskEvent @relation(fields: [riskEventId], references: [id], onDelete: Cascade)
+  riskRule    RiskRule  @relation(fields: [riskRuleId], references: [id], onDelete: Cascade)
+
+  @@unique([riskEventId, riskRuleId])
+}
+
+model RiskEventEvidence {
+  id          String    @id
+  riskEventId String
+  riskRuleId  String?
+  signal      String
+  evidence    String
+  impact      String
+  riskEvent   RiskEvent @relation(fields: [riskEventId], references: [id], onDelete: Cascade)
+
+  @@index([riskEventId])
+  @@index([riskRuleId])
+}
