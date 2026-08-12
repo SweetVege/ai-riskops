@@ -193,6 +193,7 @@ https://ai-riskops.vercel.app
 
 ## Key Documents
 
+- [Project Delivery Summary](docs/project-delivery-summary.md)
 - [Living PRD](docs/living-prd.md)
 - [Backend Readiness](docs/backend-readiness.md)
 - [API Contract](docs/api-contract.md)
