@@ -8,6 +8,7 @@ import {
   ChevronRight,
   ClipboardList,
   Code2,
+  Copy,
   GitBranch,
   Gauge,
   LayoutDashboard,
@@ -5112,6 +5113,144 @@ function formatApplicationSetupStatus(status: string) {
   return labels[status] ?? status;
 }
 
+function ingestionPayloadExample(applicationId: string, source: ApplicationCredentialApi["integrationSource"]) {
+  return {
+    contractVersion: "2026-08-06.v1",
+    ingestionSource: source,
+    application: {
+      id: applicationId,
+    },
+    request: {
+      traceId: "trace-prod-001",
+      sessionId: "session-prod-001",
+      occurredAt: "2026-08-12T10:00:00.000Z",
+    },
+    user: {
+      id: "user_123",
+      role: "Support Agent",
+      department: "Customer Service",
+    },
+    model: {
+      provider: "openai",
+      name: "gpt-4.1",
+    },
+    environment: "Test",
+    content: {
+      prompt: "Summarize this customer case and flag any sensitive data exposure risk.",
+      output: "The response should avoid exposing personal or financial data.",
+    },
+    context: {
+      dataType: "Customer Data",
+      ragContext: "CRM case notes and approved support knowledge base snippets.",
+    },
+    agent: {
+      toolCall: "lookup_customer_profile(customer_id=cust_123)",
+    },
+  };
+}
+
+function buildIngestionCurlSnippet(input: {
+  applicationId: string;
+  integrationSource: ApplicationCredentialApi["integrationSource"];
+  secret: string;
+}) {
+  return `curl -X POST "https://ai-riskops.vercel.app/api/ingest/model-call" \\
+  -H "Authorization: Bearer ${input.secret}" \\
+  -H "Content-Type: application/json" \\
+  -d '${JSON.stringify(ingestionPayloadExample(input.applicationId, input.integrationSource), null, 2)}'`;
+}
+
+function buildIngestionJsSnippet(input: {
+  applicationId: string;
+  integrationSource: ApplicationCredentialApi["integrationSource"];
+}) {
+  return `await fetch("https://ai-riskops.vercel.app/api/ingest/model-call", {
+  method: "POST",
+  headers: {
+    Authorization: \`Bearer \${process.env.AI_RISKOPS_APPLICATION_KEY}\`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(${JSON.stringify(ingestionPayloadExample(input.applicationId, input.integrationSource), null, 4)
+    .replace(/^/gm, "  ").trim()}),
+});`;
+}
+
+function IngestionSnippetPanel({
+  applicationName,
+  applicationId,
+  integrationSource,
+  secret,
+}: {
+  applicationName: string;
+  applicationId: string;
+  integrationSource: ApplicationCredentialApi["integrationSource"];
+  secret: string;
+}) {
+  const [snippetType, setSnippetType] = useState<"curl" | "js">("curl");
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const snippet = snippetType === "curl"
+    ? buildIngestionCurlSnippet({ applicationId, integrationSource, secret })
+    : buildIngestionJsSnippet({ applicationId, integrationSource });
+
+  async function copySnippet() {
+    try {
+      await navigator.clipboard.writeText(snippet);
+      setCopyState("copied");
+      window.setTimeout(() => setCopyState("idle"), 1800);
+    } catch {
+      setCopyState("failed");
+      window.setTimeout(() => setCopyState("idle"), 2200);
+    }
+  }
+
+  return (
+    <div className="mt-3 rounded-lg border border-sky-100 bg-white">
+      <div className="flex items-center justify-between gap-3 border-b border-sky-100 px-3 py-2">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-ink">Real ingestion starter</p>
+          <p className="mt-0.5 truncate text-xs text-slate-500">
+            {applicationName} · {credentialSourceLabels[integrationSource]}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSnippetType("curl")}
+            className={`h-8 rounded-lg px-3 text-xs font-semibold ${
+              snippetType === "curl" ? "bg-ink text-white" : "border border-line bg-white text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            curl
+          </button>
+          <button
+            type="button"
+            onClick={() => setSnippetType("js")}
+            className={`h-8 rounded-lg px-3 text-xs font-semibold ${
+              snippetType === "js" ? "bg-ink text-white" : "border border-line bg-white text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            JS
+          </button>
+          <button
+            type="button"
+            onClick={copySnippet}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            <Copy className="h-3.5 w-3.5" />
+            {copyState === "copied" ? "Copied" : copyState === "failed" ? "Copy failed" : "Copy"}
+          </button>
+        </div>
+      </div>
+      <pre className="max-h-80 overflow-auto whitespace-pre-wrap p-3 font-mono text-xs leading-5 text-slate-800">
+        {snippet}
+      </pre>
+      <div className="border-t border-sky-100 px-3 py-2 text-xs text-slate-500">
+        Store the secret as `AI_RISKOPS_APPLICATION_KEY` before using the JS example.
+      </div>
+    </div>
+  );
+}
+
 function ApplicationSetup({ currentProfile }: { currentProfile: UserProfile }) {
   const [setupApplications, setSetupApplications] = useState<ApplicationSetupApi[]>([]);
   const [setupSummary, setSetupSummary] = useState<ApplicationSetupSummaryApi | null>(null);
@@ -5127,6 +5266,8 @@ function ApplicationSetup({ currentProfile }: { currentProfile: UserProfile }) {
   const [pendingCredentialAction, setPendingCredentialAction] = useState<string | null>(null);
   const [revealedCredential, setRevealedCredential] = useState<{
     applicationName: string;
+    applicationId: string;
+    integrationSource: ApplicationCredentialApi["integrationSource"];
     secret: string;
   } | null>(null);
   const [newApplicationName, setNewApplicationName] = useState("");
@@ -5289,6 +5430,8 @@ function ApplicationSetup({ currentProfile }: { currentProfile: UserProfile }) {
       if (payload?.data?.secret) {
         setRevealedCredential({
           applicationName: payload.data.credential.applicationName,
+          applicationId: payload.data.credential.applicationId,
+          integrationSource: payload.data.credential.integrationSource,
           secret: payload.data.secret,
         });
       } else if (action === "revoke") {
@@ -5603,6 +5746,12 @@ function ApplicationSetup({ currentProfile }: { currentProfile: UserProfile }) {
                 Shown once
               </span>
             </div>
+            <IngestionSnippetPanel
+              applicationName={revealedCredential.applicationName}
+              applicationId={revealedCredential.applicationId}
+              integrationSource={revealedCredential.integrationSource}
+              secret={revealedCredential.secret}
+            />
           </div>
         ) : null}
 
