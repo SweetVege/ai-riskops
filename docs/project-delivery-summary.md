@@ -84,6 +84,7 @@ Verified production API surfaces:
 
 - Built a working product prototype covering 6 core product areas: Overview, Risk Analytics, Risk Events, Call Logs, Applications, and Admin.
 - Implemented API-backed demo data flows across application inventory, model-call logs, risk events, analytics summaries, user access, and ingestion.
+- Scaled the seeded demo dataset to 1,250+ model calls, 140+ risk events, and 1,250+ ingestion audit records across a one-year operating window.
 - Used seeded model-call and risk-event datasets to demonstrate trend analysis, drill-down investigation, evidence mapping, application-scoped access, and LLM-style risk insight generation.
 - Deployed the project online with persistent Postgres-backed demo data and a public Vercel URL.
 
@@ -101,7 +102,7 @@ Verified production API surfaces:
 AI RiskOps - AI Application Risk Operations Platform
 
 - Owned the end-to-end design and build of AI RiskOps, defining product positioning, users, permissions, risk metrics, and phased roadmap for enterprise LLM, RAG, and Agent application risk monitoring.
-- Built 6 core product areas across executive dashboards, risk analytics, event investigation, call logs, application views, and admin configuration, using seeded model-call and risk-event data to demonstrate drill-down analysis and LLM-style insight generation.
+- Built 6 core product areas across executive dashboards, risk analytics, event investigation, call logs, application views, and admin configuration, using 1,250+ seeded model calls and 140+ risk events to demonstrate drill-down analysis and LLM-style insight generation.
 - Shipped a production-ready prototype with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel, enabling persistent API-backed demo data, policy simulation foundation, evidence mapping, and application-scoped access.
 
 ## Interview Pitch
