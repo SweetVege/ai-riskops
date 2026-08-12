@@ -252,6 +252,7 @@ All success and failure paths write an ingestion audit record when possible.
 6. Matched rules and evidence are persisted for investigation.
 7. Overview, Risk Analytics, Risk Events, and Call Logs update from the persisted data.
 8. The application credential `lastUsedAt` timestamp is updated.
+9. Application Setup validation checks are marked as passed for the fields proven by the ingested payload.
 
 ## 11. Pre-Production Checklist
 

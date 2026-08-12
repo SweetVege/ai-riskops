@@ -1,4 +1,14 @@
 import { normalizeCredentialSource, normalizeCredentialStatus } from "@/lib/api/application-credentials";
+import { prisma } from "@/lib/prisma";
+
+type IngestionValidationInput = {
+  applicationId: string;
+  hasCredential: boolean;
+  prompt?: string | null;
+  output?: string | null;
+  ragContext?: string | null;
+  toolCall?: string | null;
+};
 
 export function formatApplicationSetup(application: {
   id: string;
@@ -84,4 +94,49 @@ export function formatApplicationSetup(application: {
           revokedAt: null,
         },
   };
+}
+
+export async function updateApplicationIngestionValidation(input: IngestionValidationInput) {
+  const passedKeys = new Set<string>(["call_logs_received"]);
+
+  if (input.hasCredential) passedKeys.add("api_key_configured");
+  if (input.prompt) passedKeys.add("prompt_captured");
+  if (input.output) passedKeys.add("output_captured");
+  if (input.ragContext) passedKeys.add("rag_context_captured");
+  if (input.toolCall) passedKeys.add("tool_calls_audited");
+
+  await prisma.integrationValidationCheck.updateMany({
+    where: {
+      applicationId: input.applicationId,
+      checkKey: {
+        in: [...passedKeys],
+      },
+      status: {
+        not: "passed",
+      },
+    },
+    data: {
+      status: "passed",
+    },
+  });
+
+  const checks = await prisma.integrationValidationCheck.findMany({
+    where: {
+      applicationId: input.applicationId,
+    },
+    select: {
+      status: true,
+    },
+  });
+  const passedCount = checks.filter((check) => check.status === "passed").length;
+  const fieldCoverage = Math.round((passedCount / Math.max(checks.length, 1)) * 100);
+
+  await prisma.application.update({
+    where: {
+      id: input.applicationId,
+    },
+    data: {
+      fieldCoverage,
+    },
+  });
 }

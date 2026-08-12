@@ -4,6 +4,7 @@ import {
   normalizeCredentialSource,
   normalizeCredentialStatus,
 } from "@/lib/api/application-credentials";
+import { updateApplicationIngestionValidation } from "@/lib/api/application-setup";
 import { dataProtectionMeta, protectCapturedFields, protectCapturedText } from "@/lib/api/data-protection";
 import {
   dataTypes,
@@ -604,6 +605,15 @@ export async function POST(request: Request) {
     callLogId: callLog.id,
     riskEventId,
     dataProtectionMode: protectedFields.mode,
+  });
+
+  await updateApplicationIngestionValidation({
+    applicationId: application.id,
+    hasCredential: Boolean(authenticatedCredential),
+    prompt: normalized.prompt,
+    output,
+    ragContext: normalized.ragContext,
+    toolCall: normalized.toolCall,
   });
 
   return apiCreated(
