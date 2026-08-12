@@ -1329,7 +1329,32 @@ Verification:
 - `pnpm run prisma:generate` passes.
 - `pnpm build` passes.
 
-## 48. Decisions Before Backend Implementation
+## 48. Backend V1.10 Neon Database Initialization
+
+Completed:
+
+- Configured local `.env` with the Neon pooled Postgres connection string.
+- Updated `prisma/seed.mjs` to load `.env` explicitly.
+- Ran `pnpm run db:reset` against Neon.
+- Started the production preview against Neon-backed data.
+- Verified read and write API paths against Neon.
+
+Backend implication:
+
+- AI RiskOps now has a real hosted Postgres database for local verification and upcoming Vercel deployment.
+- The current Neon credential is local-only and not committed, but should be rotated before public production use because it was shared during setup.
+- Seed data has been loaded into Neon; one additional ingestion smoke-test record was written during verification.
+
+Verification:
+
+- `pnpm run db:reset` passes.
+- `pnpm build` passes.
+- `/` returns HTTP 200.
+- Overview, User Access, and Risk Events APIs read from Neon successfully.
+- Ingestion API writes a model call and generated severe risk event to Neon.
+- Overview aggregate metrics reflect the new ingestion record.
+
+## 49. Decisions Before Backend Implementation
 
 Need product confirmation:
 

@@ -2606,7 +2606,40 @@ Next step:
 
 - Create a Neon Postgres project, set `DATABASE_URL`, run `pnpm run db:reset`, then verify the app against the real Neon database before deploying to Vercel.
 
-## 76. Decision Notes
+## 76. Backend V1.10 Neon Database Initialization
+
+AI RiskOps now has a working Neon Postgres database behind the local production preview.
+
+Decision:
+
+- Use the Neon pooled connection string for serverless-compatible runtime access.
+- Keep `.env` local and untracked.
+- Rotate the Neon password before public production use because the initial connection string was shared during setup.
+
+Completed:
+
+- Wrote the Neon `DATABASE_URL` to local `.env`.
+- Updated the seed script to explicitly load `.env`.
+- Ran `pnpm run db:reset` against Neon.
+- Started the app against Neon-backed data.
+- Verified read APIs and model-call ingestion write path.
+
+Verification:
+
+- `pnpm run db:reset` passes against Neon.
+- `pnpm build` passes.
+- `/` returns HTTP 200.
+- `GET /api/overview/summary?profile=platform-admin` returns seeded Neon metrics.
+- `GET /api/admin/user-access?profile=platform-admin` returns seeded users and permission sets.
+- `GET /api/risk-events?profile=platform-admin` returns seeded events.
+- `POST /api/ingest/model-call?profile=platform-admin` creates a new call log and severe risk event in Neon.
+- Overview summary updates from 4 to 5 risk events after ingestion.
+
+Next step:
+
+- Push the repository to GitHub, configure Vercel with the Neon `DATABASE_URL`, and deploy the first online version.
+
+## 77. Decision Notes
 
 - Product name remains AI RiskOps.
 - User-facing product content should be displayed in English.
