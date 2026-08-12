@@ -2575,7 +2575,38 @@ Non-essential for immediate launch:
 - Full case-management or remediation workflows.
 - More frontend analytics features before real data ingestion works.
 
-## 75. Decision Notes
+## 75. Backend V1.9 Neon Postgres Migration Preparation
+
+AI RiskOps now targets Neon Postgres for the first online deployment path.
+
+Decision:
+
+- Use Vercel + Neon Postgres for the fastest online version.
+- Stop using local SQLite as the runtime database path.
+- Require `DATABASE_URL` to be a Postgres connection string before starting or seeding the product.
+- Keep demo User Profile switching for first online demo mode until real authentication is selected.
+
+Completed:
+
+- Changed Prisma datasource provider from SQLite to Postgres.
+- Replaced the Prisma SQLite runtime adapter with `@prisma/adapter-pg`.
+- Replaced SQLite dependencies with Postgres dependencies.
+- Updated local and deployment environment templates for Postgres.
+- Updated seed flow so database schema setup uses `prisma db push` and seed only inserts data.
+- Updated README and online launch plan for Neon Postgres.
+- Updated build and preview scripts to generate Prisma Client before building.
+
+Verification:
+
+- `pnpm install --force` completes.
+- `pnpm run prisma:generate` passes with Prisma Client 7.9.1.
+- `pnpm build` passes.
+
+Next step:
+
+- Create a Neon Postgres project, set `DATABASE_URL`, run `pnpm run db:reset`, then verify the app against the real Neon database before deploying to Vercel.
+
+## 76. Decision Notes
 
 - Product name remains AI RiskOps.
 - User-facing product content should be displayed in English.

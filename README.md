@@ -21,7 +21,7 @@ It helps AI governance, security, risk, compliance, and internal AI application 
 - TypeScript
 - Tailwind CSS
 - Prisma
-- SQLite for local prototype storage
+- Postgres for online-ready persistent storage
 
 ## Local Setup
 
@@ -29,7 +29,7 @@ It helps AI governance, security, risk, compliance, and internal AI application 
 pnpm install
 cp .env.example .env
 pnpm run prisma:generate
-pnpm run db:seed
+pnpm run db:reset
 pnpm build
 pnpm start
 ```
@@ -46,6 +46,7 @@ http://localhost:3000
 pnpm build
 pnpm start
 pnpm run prisma:generate
+pnpm run db:push
 pnpm run db:seed
 pnpm run db:reset
 ```
@@ -53,10 +54,10 @@ pnpm run db:reset
 ## Environment Variables
 
 ```text
-DATABASE_URL="file:./prisma/dev.db"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST/DB?sslmode=require"
 ```
 
-The current local prototype uses SQLite. For online deployment, replace local SQLite with a production database before handling persistent real data.
+AI RiskOps now expects a Postgres connection string. For the fastest launch path, use Neon Postgres and copy its pooled connection string into `DATABASE_URL`.
 
 ## Key Documents
 
@@ -95,7 +96,7 @@ Production authorization should be based on authenticated users, permission sets
 
 Before using AI RiskOps with persistent real data:
 
-- Choose a production database.
+- Create a Neon Postgres database.
 - Configure deployment environment variables and secret handling.
 - Replace demo profile switching with real session identity or explicitly keep it as demo mode.
 - Verify application credential ingestion in the deployed environment.
@@ -104,7 +105,7 @@ Before using AI RiskOps with persistent real data:
 Recommended first launch path:
 
 ```text
-GitHub -> Vercel -> Neon Postgres or Supabase Postgres
+GitHub -> Vercel -> Neon Postgres
 ```
 
 ## Status

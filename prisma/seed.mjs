@@ -1,12 +1,14 @@
 import prismaPkg from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import Database from "better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 const { PrismaClient } = prismaPkg;
-const databaseUrl = process.env.DATABASE_URL ?? "file:./prisma/dev.db";
-const adapter = new PrismaBetterSqlite3({ url: databaseUrl });
-const dbPath = databaseUrl.replace(/^file:/, "");
+const databaseUrl = process.env.DATABASE_URL;
 
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is required before seeding AI RiskOps.");
+}
+
+const adapter = new PrismaPg({ connectionString: databaseUrl });
 const prisma = new PrismaClient({ adapter });
 
 const now = new Date("2026-07-08T00:00:00.000Z");
@@ -552,8 +554,6 @@ function validationChecks(appId, doneLabels) {
 }
 
 async function main() {
-  initializeDatabase();
-
   await prisma.riskEventEvidence.deleteMany();
   await prisma.riskEventRuleMatch.deleteMany();
   await prisma.ingestionRequestAudit.deleteMany();

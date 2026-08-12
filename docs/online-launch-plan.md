@@ -12,7 +12,7 @@ Recommended first online stack:
 |---|---|---|
 | Source control | GitHub | Standard project hosting and CI |
 | App hosting | Vercel | Fastest path for a Next.js prototype |
-| Production database | Neon Postgres or Supabase Postgres | Persistent online data for Prisma |
+| Production database | Neon Postgres | Fastest Vercel-friendly persistent data path for Prisma |
 | Ingestion auth | Application API keys | Already supported by `POST /api/ingest/model-call` |
 | Human auth | Demo profile mode first | Avoid delaying launch with full SSO |
 
@@ -22,20 +22,20 @@ Ready:
 
 - Next.js production build passes.
 - Local Git repository is initialized.
-- `.gitignore` excludes environment files, local SQLite DB, caches, generated output, and dependencies.
+- `.gitignore` excludes environment files, local databases, caches, generated output, and dependencies.
 - README exists with product scope, local setup, API links, and readiness notes.
 - GitHub CI workflow exists.
 - API contract exists.
 - Application credential ingestion exists.
 - Admin access audit logs exist.
+- Prisma schema has been moved to Postgres.
+- Runtime Prisma client uses the Postgres adapter.
 
-Not ready for real persistent online data:
+Still required for real persistent online data:
 
-- Prisma schema currently uses SQLite.
-- Runtime Prisma client currently uses `@prisma/adapter-better-sqlite3`.
-- No production Postgres adapter or Postgres schema has been installed/configured yet.
-- No online database has been provisioned.
-- No production environment variables have been configured.
+- Neon database must be provisioned.
+- `DATABASE_URL` must be configured locally and in Vercel.
+- `pnpm run db:reset` must be run against the selected Neon database before demo use.
 - Demo User Profile switching is still the human access mechanism.
 
 ## 3. Minimum GitHub Steps
@@ -49,14 +49,12 @@ Not ready for real persistent online data:
 
 ## 4. Minimum Deployment Steps
 
-1. Choose online database provider.
-2. Convert Prisma from SQLite to Postgres.
-3. Add the required Postgres Prisma driver adapter.
-4. Create migration or production schema setup path.
-5. Configure deployment environment variables.
-6. Deploy to Vercel.
-7. Run seed or controlled demo data setup against the production database.
-8. Verify:
+1. Create a Neon Postgres database.
+2. Configure `DATABASE_URL` locally and in Vercel.
+3. Run `pnpm run db:reset` against Neon.
+4. Deploy to Vercel.
+5. Confirm the GitHub Actions and Vercel builds pass.
+6. Verify:
    - `/`
    - `/api/session`
    - `/api/overview/summary`
@@ -84,10 +82,11 @@ Use Postgres for online deployment.
 
 Do not use local SQLite for online real data because serverless deployment storage is not durable and does not support a reliable multi-user operating model.
 
-Recommended choice:
+Selected choice:
 
-- Neon Postgres if the goal is fastest Vercel-friendly setup.
-- Supabase Postgres if the project may later need built-in auth, storage, or dashboard tooling.
+- Neon Postgres for the first online version.
+
+Supabase can be reconsidered later if the product needs built-in auth, storage, or broader backend-as-a-service tooling.
 
 ## 7. Deferred Until After Launch
 
@@ -99,12 +98,17 @@ Recommended choice:
 - More frontend-only analytics expansion.
 - Full remediation or case-management workflows.
 
-## 8. Immediate Next Decision
+## 8. Immediate Next Step
 
-Before code changes for production database support, choose:
+Create a Neon Postgres project and provide:
 
 ```text
-Neon Postgres or Supabase Postgres
+DATABASE_URL
 ```
 
-After that decision, the next engineering step is to migrate Prisma runtime and schema from SQLite to Postgres.
+Then run:
+
+```bash
+pnpm run db:reset
+pnpm build
+```

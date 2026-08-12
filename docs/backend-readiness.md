@@ -1303,7 +1303,33 @@ Defer:
 - Dedicated audit center.
 - More frontend-only analytics or governance workflow expansion.
 
-## 47. Decisions Before Backend Implementation
+## 47. Backend V1.9 Neon Postgres Migration Preparation
+
+Completed:
+
+- Selected Neon Postgres as the first online database path.
+- Changed `prisma/schema.prisma` datasource provider to `postgresql`.
+- Updated Prisma runtime from `@prisma/adapter-better-sqlite3` to `@prisma/adapter-pg`.
+- Replaced SQLite package dependencies with Postgres dependencies.
+- Updated `DATABASE_URL` examples to Postgres connection strings.
+- Added `db:push` and made `db:reset` run schema push plus seed.
+- Updated seed startup so schema creation is handled by Prisma instead of SQLite-specific manual SQL.
+- Updated README and launch plan for Vercel + Neon Postgres.
+
+Backend implication:
+
+- The codebase is now build-ready for Neon Postgres.
+- Runtime APIs require a valid Postgres `DATABASE_URL`.
+- Local SQLite demo storage is no longer the runtime path.
+- A real Neon connection string is still required before API smoke tests, seeding, Vercel deployment, or real-data ingestion verification.
+
+Verification:
+
+- `pnpm install --force` completes.
+- `pnpm run prisma:generate` passes.
+- `pnpm build` passes.
+
+## 48. Decisions Before Backend Implementation
 
 Need product confirmation:
 
