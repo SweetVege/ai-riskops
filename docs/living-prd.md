@@ -2685,3 +2685,4 @@ Next step:
 - Risk Analytics aggregation should move into backend APIs before adding more frontend-only analytics complexity.
 - Risk Analytics frontend should consume backend aggregation APIs incrementally while keeping raw event/log reads for evidence and fallback states.
 - Successful model-call ingestion should update Application Setup validation checks so real traffic automatically proves API key configuration, call-log receipt, captured prompt/output/RAG context, and audited tool-call readiness.
+- The public demo should display a persistent demo-mode notice because User Profile switching simulates access scope and is not production authentication.

@@ -6813,6 +6813,20 @@ export default function Home() {
             </div>
           </header>
 
+          <section className="border-b border-amber-200 bg-amber-50 px-6 py-2">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex min-w-0 items-center gap-2">
+                <Shield className="h-4 w-4 shrink-0 text-amber-700" />
+                <p className="truncate text-xs font-medium text-amber-900">
+                  Public demo mode: User Profile switching simulates access scope for product demonstration and is not production authentication.
+                </p>
+              </div>
+              <span className="shrink-0 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-amber-800">
+                Demo / Profile Mode
+              </span>
+            </div>
+          </section>
+
           {activeNav === "Risk Events" ? (
             <RiskEventsWorkbench
               currentProfile={currentProfile}
