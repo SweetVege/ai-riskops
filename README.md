@@ -191,6 +191,37 @@ Current production demo:
 https://ai-riskops.vercel.app
 ```
 
+## Launch Readiness
+
+Current online status:
+
+| Area | Status |
+|---|---|
+| Public demo | Live on Vercel |
+| Database | Neon Postgres with persistent demo data |
+| Frontend surfaces | Overview, Risk Analytics, Risk Events, Call Logs, Applications, and Admin are available |
+| Backend reads | Scoped APIs for overview, analytics, risk events, call logs, applications, admin setup, and user access |
+| Backend writes | Model-call ingestion, risk event review updates, application setup, credential management, and user access updates |
+| Real ingestion path | `POST /api/ingest/model-call` with application API keys |
+| Ingestion validation | Verified with credential-authenticated smoke tests and ingestion audit records |
+| Human access | Demo User Profile switching, not production authentication |
+
+Ready for portfolio and product demo use:
+
+- Public Vercel demo with API-backed data.
+- Seeded operating dataset with 1,250+ model calls, 140+ risk events, and ingestion audit history.
+- Application credential generation, rotation, revocation, and one-time starter snippets.
+- Credential-authenticated model-call ingestion that creates Call Logs, Risk Events, matched rule evidence, ingestion audit records, and Application Setup validation updates.
+- Application-scoped views for App Owner demo profiles.
+
+Required before real sensitive production data:
+
+- Rotate setup-time Neon database credentials and update Vercel `DATABASE_URL`.
+- Replace demo User Profile switching with real authentication, or keep the deployment explicitly marked as demo mode.
+- Add tenant and production authorization boundaries before multi-company or multi-tenant use.
+- Store application credentials only in source-system secret managers.
+- Decide raw-content retention, masking, and deletion policy for production model-call payloads.
+
 ## Key Documents
 
 - [Project Delivery Summary](docs/project-delivery-summary.md)

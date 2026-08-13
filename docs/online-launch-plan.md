@@ -37,14 +37,22 @@ Ready:
   - `/api/overview/summary`
   - `/api/applications`
   - `/api/risk-events`
+- Real ingestion smoke tests have been completed:
+  - created a dedicated smoke test application
+  - generated and revoked temporary application credentials
+  - sent credential-authenticated model-call payloads
+  - confirmed Call Logs, Risk Events, Risk Analytics, and ingestion audit updates
+  - confirmed Application Setup validation checks update after successful ingestion
+- Application Setup now shows one-time starter snippets after credential generation or rotation.
 
 Still required before real sensitive production data:
 
 - Rotate setup-time database credentials.
 - Update `DATABASE_URL` in Vercel after credential rotation.
 - Update local `.env` after credential rotation.
-- Confirm ingestion credentials and audit logs in the deployed environment.
 - Demo User Profile switching is still the human access mechanism.
+- Decide production raw-content masking, retention, and deletion policy.
+- Add production authentication and authorization boundaries before any real multi-user deployment.
 
 ## 3. Minimum GitHub Steps
 
@@ -115,11 +123,11 @@ Supabase can be reconsidered later if the product needs built-in auth, storage, 
 ## 8. Immediate Next Step
 
 1. Rotate the Neon database password before ingesting real sensitive data.
-2. Generate one application credential for a test integration.
-3. Send 10 to 20 test model-call records to `POST /api/ingest/model-call`.
+2. Update Vercel `DATABASE_URL` after credential rotation.
+3. Update local `.env` after credential rotation.
 4. Re-run production smoke checks against:
    - `https://ai-riskops.vercel.app`
    - `https://ai-riskops.vercel.app/api/overview/summary`
    - `https://ai-riskops.vercel.app/api/applications`
    - `https://ai-riskops.vercel.app/api/risk-events`
-5. Verify Call Logs, Risk Events, Risk Analytics, and ingestion audit behavior from the ingested sample.
+5. Keep the public deployment clearly positioned as demo mode until production authentication replaces User Profile switching.

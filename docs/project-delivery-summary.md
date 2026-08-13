@@ -79,6 +79,7 @@ Verified production API surfaces:
 - `GET /api/applications`
 - `GET /api/risk-events`
 - `POST /api/ingest/model-call`
+- `GET /api/admin/ingestion-audit`
 
 ## Quantified Outcomes
 
@@ -87,6 +88,7 @@ Verified production API surfaces:
 - Scaled the seeded demo dataset to 1,250+ model calls, 140+ risk events, and 1,250+ ingestion audit records across a one-year operating window.
 - Used seeded model-call and risk-event datasets to demonstrate trend analysis, drill-down investigation, evidence mapping, application-scoped access, and LLM-style risk insight generation.
 - Deployed the project online with persistent Postgres-backed demo data and a public Vercel URL.
+- Verified credential-authenticated real ingestion smoke tests that created persistent Call Logs, Risk Events, matched evidence, ingestion audit records, and Application Setup validation updates.
 
 ## Recommended Demo Flow
 
@@ -114,7 +116,7 @@ The first version focuses on making risk visible and explainable. Governance lea
 ## Next Priorities
 
 1. Add basic production authentication to replace demo profile switching.
-2. Harden ingestion credentials and run a small real model-call ingestion pilot.
+2. Rotate setup-time database credentials before ingesting any real sensitive data.
 3. Add lightweight tests for core API routes and permission-scoped reads.
-4. Rotate setup-time database credentials before ingesting any real sensitive data.
-5. Decide whether to expose ingestion audit records in the Admin UI.
+4. Decide production raw-content retention, masking, and deletion policy.
+5. Add a production deployment banner or demo-mode indicator if the public URL remains accessible.
