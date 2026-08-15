@@ -248,7 +248,6 @@ Ready for portfolio and product demo use:
 
 Required before real sensitive production data:
 
-- Rotate setup-time Neon database credentials and update Vercel `DATABASE_URL`.
 - Replace demo User Profile switching with real authentication, or keep the deployment explicitly marked as demo mode.
 - Add tenant and production authorization boundaries before multi-company or multi-tenant use.
 - Store application credentials only in source-system secret managers.
@@ -256,6 +255,7 @@ Required before real sensitive production data:
 
 ## Key Documents
 
+- [Portfolio Showcase Pack](docs/portfolio-showcase-pack.md)
 - [Project Delivery Summary](docs/project-delivery-summary.md)
 - [Living PRD](docs/living-prd.md)
 - [Interview Notes](docs/interview-notes.md)
@@ -309,12 +309,11 @@ Before using AI RiskOps with sensitive or production data:
 
 ## Security Notes
 
-- Rotate Neon database credentials before using the project with real data or sharing the deployment broadly.
-- Update Vercel `DATABASE_URL` after rotating the Neon password.
+- Neon database credentials were rotated after launch setup and Vercel `DATABASE_URL` was updated.
 - Update local `.env` after rotating the Neon password.
 - Treat generated application API keys as secrets.
 - Demo profile switching is not a production authentication system.
 
 ## Status
 
-This project is an online prototype with a working Vercel deployment, Neon Postgres persistence, seeded demo data, and API-backed product surfaces. The next priorities are secret rotation, README/documentation polish, real ingestion hardening, and production authentication planning.
+This project is an online prototype with a working Vercel deployment, Neon Postgres persistence, seeded demo data, API-backed product surfaces, and a portfolio-ready documentation package. The next priorities are real ingestion hardening, production authentication planning, and raw-content retention policy design.
