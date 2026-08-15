@@ -261,6 +261,7 @@ Required before real sensitive production data:
 - [Interview Notes](docs/interview-notes.md)
 - [Backend Readiness](docs/backend-readiness.md)
 - [API Contract](docs/api-contract.md)
+- [Real Data Intake Plan](docs/real-data-intake-plan.md)
 - [Real Data Ingestion Guide](docs/real-data-ingestion-guide.md)
 - [Authentication And Permission Design](docs/auth-permission-design.md)
 - [Online Launch Plan](docs/online-launch-plan.md)

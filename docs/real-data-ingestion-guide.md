@@ -4,6 +4,8 @@ This guide explains how to connect real LLM, RAG, and Agent application traffic 
 
 AI RiskOps currently acts as a risk observability and evidence platform. It records model calls, evaluates risk signals, creates risk events when needed, and updates analytics. Blocking or redaction decisions can be returned as recommendations, but the source application or gateway remains responsible for enforcing those actions.
 
+For rollout sequencing, source selection, field mapping, and first-sample acceptance criteria, see [Real Data Intake Plan](real-data-intake-plan.md).
+
 ## 1. Recommended Ingestion Path
 
 For the first online version, use the Model Call Ingestion API with an application credential.
