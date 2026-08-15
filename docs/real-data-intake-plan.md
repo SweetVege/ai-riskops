@@ -213,3 +213,35 @@ Once the first data source is selected:
 4. Send the sample through `POST /api/ingest/model-call`.
 5. Validate Call Logs, Risk Events, Risk Analytics, Overview, and Ingestion Audit.
 6. Document mapping issues and update the ingestion contract only if needed.
+
+## Replay Tool
+
+AI RiskOps includes a local replay tool for the first masked sample set.
+
+Dry-run validation:
+
+```bash
+node scripts/replay-real-sample.mjs
+```
+
+Equivalent package script:
+
+```bash
+pnpm run replay:sample
+```
+
+Send to an AI RiskOps ingestion endpoint:
+
+```bash
+AI_RISKOPS_APPLICATION_KEY="<application_api_key>" \
+node scripts/replay-real-sample.mjs --send
+```
+
+Optional environment variables and flags:
+
+- `AI_RISKOPS_INGEST_URL`: override the default production demo ingestion endpoint.
+- `AI_RISKOPS_APPLICATION_KEY`: required only when `--send` is used.
+- `--file <path>`: replay a different sample JSON file.
+- `--limit <number>`: replay only the first N samples.
+
+Default mode is dry-run. Do not use `--send` until a Test application credential has been generated and stored outside the repository.

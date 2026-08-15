@@ -9,6 +9,7 @@
     "preview": "pnpm build && pnpm start",
     "lint": "next lint",
     "test:contracts": "node scripts/check-risk-status-contract.mjs",
+    "replay:sample": "node scripts/replay-real-sample.mjs",
     "prisma:generate": "node node_modules/prisma/build/index.js generate",
     "db:push": "node node_modules/prisma/build/index.js db push",
     "db:seed": "node prisma/seed.mjs",
