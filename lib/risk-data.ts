@@ -20,6 +20,7 @@ export type RiskAction = "allow" | "flag" | "redact" | "review" | "block";
 export type RiskLevel = "low" | "medium" | "high" | "severe";
 export type ReviewStatus =
   | "pending_review"
+  | "in_review"
   | "in_progress"
   | "confirmed"
   | "false_positive"
@@ -917,6 +918,11 @@ export const reviewStatusMeta: Record<
     label: "In Progress",
     className: "bg-cyan-50 text-cyan-700 ring-cyan-200",
     description: "An owner has taken the event and is investigating or contacting the business team.",
+  },
+  in_review: {
+    label: "In Review",
+    className: "bg-cyan-50 text-cyan-700 ring-cyan-200",
+    description: "An owner has taken the event and is reviewing the risk evidence.",
   },
   confirmed: {
     label: "Confirmed",

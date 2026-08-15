@@ -12,6 +12,7 @@ type RouteContext = {
 
 const reviewStatuses = new Set([
   "pending_review",
+  "in_review",
   "in_progress",
   "confirmed",
   "false_positive",

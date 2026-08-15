@@ -290,7 +290,11 @@ function ActionPill({ action }: { action: RiskEvent["action"] }) {
 }
 
 function ReviewStatusPill({ status }: { status: ReviewStatus }) {
-  const meta = reviewStatusMeta[status];
+  const meta = reviewStatusMeta[status] ?? {
+    label: status.replaceAll("_", " "),
+    className: "bg-slate-100 text-slate-700 ring-slate-200",
+    description: "Review status returned by the backend.",
+  };
   return (
     <span
       title={meta.description}
@@ -698,6 +702,7 @@ function EventDetail({
                     className="h-9 rounded-lg border border-line bg-white px-3 text-sm text-ink outline-none focus:border-slate-400"
                   >
                     <option value="pending_review">Pending Review</option>
+                    <option value="in_review">In Review</option>
                     <option value="in_progress">In Progress</option>
                     <option value="confirmed">Confirmed</option>
                     <option value="false_positive">False Positive</option>
@@ -3625,7 +3630,9 @@ function RiskEventsWorkbench({
 
   const visibleSelectedEvent = detailEvent ?? events.find((event) => event.id === selectedId) ?? events[0];
   const pendingCount = events.filter((event) => event.reviewStatus === "pending_review").length;
-  const inProgressCount = events.filter((event) => event.reviewStatus === "in_progress").length;
+  const inProgressCount = events.filter((event) =>
+    event.reviewStatus === "in_progress" || event.reviewStatus === "in_review",
+  ).length;
   const confirmedCount = events.filter((event) => event.reviewStatus === "confirmed").length;
   const falsePositiveCount = events.filter((event) => event.reviewStatus === "false_positive").length;
   const saveCurrentView = () => {
@@ -3798,6 +3805,7 @@ function RiskEventsWorkbench({
               >
                 <option value="All">All Review States</option>
                 <option value="pending_review">Pending Review</option>
+                <option value="in_review">In Review</option>
                 <option value="in_progress">In Progress</option>
                 <option value="confirmed">Confirmed</option>
                 <option value="false_positive">False Positive</option>
