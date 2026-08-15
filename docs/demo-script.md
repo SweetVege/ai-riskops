@@ -1,33 +1,38 @@
 # AI RiskOps Demo Script
 
-## Audience
+Use this script for portfolio walkthroughs, recruiter screens, product interviews, and technical interviews. It is written to be usable as a spoken track, not only as product documentation.
 
-This demo is designed for:
-
-- Enterprise security and risk teams
-- Internal AI application platform teams
-- Compliance and audit stakeholders
-- Buyers evaluating GenAI governance, LLM security, or AI risk operations products
-
-## Core Message
-
-AI RiskOps helps enterprises monitor, detect, govern, and review risks introduced by LLM, RAG, Copilot, and Agent applications.
-
-The product chain is:
+Live demo:
 
 ```text
-AI application call
--> call log
--> risk detection
--> risk event
--> system action
--> human review
--> policy tuning
+https://ai-riskops.vercel.app
 ```
 
-## 3-Minute Demo
+Repository:
 
-### 1. Start With Overview
+```text
+https://github.com/SweetVege/AI-RiskOps
+```
+
+## One-Minute Pitch
+
+AI RiskOps is an enterprise AI application risk operations platform for LLM, RAG, Copilot, and Agent applications.
+
+The problem is that enterprises are shipping AI applications faster than governance teams can understand what those apps are doing. Traditional logs can show requests and errors, but they do not explain AI-specific risks like prompt injection, sensitive data leakage, unsafe agent tool use, unauthorized access, or risky model output.
+
+AI RiskOps provides an observability and risk operations layer. It records model calls, detects risk events, explains matched rules and evidence, and helps governance leaders, analysts, app owners, and platform admins understand AI risk from the right scope.
+
+## What To Emphasize
+
+- This is a working online prototype, not a static mockup.
+- The demo uses Neon Postgres with 5,000+ seeded model calls, 620+ risk events, and 5,000+ ingestion audit records.
+- Product surfaces are API-backed: Overview, Risk Analytics, Risk Events, Call Logs, Applications, and Admin.
+- The product focuses on recording, measuring, and explaining AI risk; it does not try to replace full audit, case management, or remediation platforms.
+- User Profile switching is demo-mode access simulation, not production authentication.
+
+## 3-Minute Demo Flow
+
+### 1. Overview: Enterprise AI Risk Posture
 
 Click path:
 
@@ -37,9 +42,9 @@ Overview
 
 Talk track:
 
-- This is the AI application risk overview.
-- It shows model call volume, risk event count, blocked calls, and average event risk score.
-- The goal is to give security and risk teams a daily operating picture across LLM, RAG, and Agent applications.
+- This is the executive and governance view of AI application risk.
+- It separates model-call volume from actual risk events and blocked actions.
+- The goal is to help leaders quickly see whether AI risk is increasing, which applications are driving it, and which risk categories matter most.
 
 Point out:
 
@@ -54,13 +59,35 @@ Point out:
 
 Explain:
 
-- Risk Level Trend can switch between Daily, Monthly, and Quarterly.
-- The stacked bars show event volume by severity level.
-- The blue line shows High+Severe Rate, with a point and percentage label for each period.
-- Risk Category Distribution is shown as a solid pie chart.
-- Top Risky Applications is a horizontal bar chart ranked by Severe Count, with average risk score as the tie-breaker.
+- The stacked bars show event volume by severity.
+- The blue line shows High+Severe Rate.
+- Top Risky Applications is ranked by Severe Count first.
+- Severe Event Snapshot gives a direct path into detailed event investigation.
 
-### 2. Open Risk Event Workbench
+### 2. Risk Analytics: Explain What Changed
+
+Click path:
+
+```text
+Risk Analytics
+```
+
+Talk track:
+
+- Overview tells us what happened; Risk Analytics helps explain why it happened.
+- Analysts can break down risk by application, category, matched rule, environment, user role, and data type.
+- The LLM-style insight copy is designed to help analysts summarize the likely drivers behind severe-risk increases.
+
+Point out:
+
+- Risk Event Rate
+- High+Severe Rate
+- Average Risk Score
+- Block Rate
+- Driver analysis
+- Drill-down entry points into Risk Events
+
+### 3. Risk Events: Evidence-Based Investigation
 
 Click path:
 
@@ -70,10 +97,9 @@ Risk Events
 
 Talk track:
 
-- This is the event handling queue.
-- Overview is for posture; Risk Events is for operational review and remediation.
-- Events are separated by risk level, system action, and human review status.
-- Operators can search by app, user, or rule ID, then narrow the list by level, system action, or review status.
+- Risk Events is the analyst workbench.
+- It is not intended to be a full remediation workflow; it helps security, risk, and compliance teams discover issues and build governance actions with app teams.
+- Each event has severity, system action, human review status, owner, SLA, matched rules, and evidence.
 
 Point out:
 
@@ -81,34 +107,20 @@ Point out:
 - Risk level filter
 - System action filter
 - Human review filter
-- Clear filters
-- Pending Review
-- In Progress
-- Confirmed
-- False Positive
-- Owner
+- Event title
+- Risk level
+- System action
+- Human review status
 - SLA
 
-### 3. Explain One Event
+Open one severe event and explain:
 
-Click any severe event.
+- Matched Rules & Evidence connects the detection rule to concrete model-call evidence.
+- System Action shows what AI RiskOps did automatically, such as block, redact, review, or flag.
+- Human Review Status shows what the operations team has determined after review.
+- Linked Call Log keeps the event traceable back to the original model call.
 
-Talk track:
-
-- Each event preserves the risk score, matched rules, evidence, original prompt, tool call, recommendation, and review workflow.
-- The system action shows what AI RiskOps did automatically.
-- The human review status shows where the operations team is in the remediation lifecycle.
-
-Point out:
-
-- Matched Rules
-- Evidence
-- Prompt
-- Tool Call
-- Recommended Action
-- Review & Response
-
-### 4. Trace Back To Call Logs
+### 4. Call Logs: The Audit Backbone
 
 Click path:
 
@@ -118,76 +130,82 @@ Call Logs
 
 Talk track:
 
-- Every risk event should be traceable back to an original AI call.
-- Call logs provide auditability: who called which model, with what context, what tool call, and what action was taken.
+- Call Logs are the audit backbone of the product.
+- Every risk event should be traceable to a source model call.
+- Logs include application, model, environment, prompt, output, RAG context, tool call, score, action, and linked risk event metadata.
+- Standard API responses mask sensitive raw content by default.
 
 Point out:
 
 - Call ID
 - Trace ID
-- Event ID
-- Prompt
-- Model Output
-- RAG Context
-- Agent Tool Call
+- Application
+- Model
+- Risk score
+- Action
+- Linked event
 
-### 5. Show Policy Center
-
-Click path:
-
-```text
-Policy Center
-```
-
-Talk track:
-
-- Policy Center is where governance teams manage rules and default actions.
-- Rules are grouped into strategy templates by application type.
-- The formal false-positive metric is based on human review outcomes, not system guesses.
-
-Point out:
-
-- Policy Templates
-- Rule Library
-- Human-reviewed false-positive rate
-- Response Matrix
-
-### 6. Close With Application Onboarding
+### 5. Applications: App-Level Risk Profiles
 
 Click path:
 
 ```text
-Application Onboarding
+Applications
 ```
 
 Talk track:
 
-- Enterprises can connect through an OpenAI-compatible proxy, SDK, log ingestion API, or Agent tool audit integration.
-- This answers how teams move from a demo into actual deployment.
-- Click a connected application to show its integration method, owner, environment status, field coverage, and validation checklist.
+- Applications shows risk posture by AI application.
+- This matters because app owners usually care about the apps they own, while governance leaders care about the global portfolio.
+- In demo mode, App Owner profile only sees assigned applications and related data.
 
 Point out:
 
-- OpenAI-compatible Proxy
-- SDK Integration
-- Log Ingestion API
-- Agent Tool Audit
-- Connected App Detail
-- Environment Status
-- Validation Checklist
-- Proxy code example
+- Application status
+- Owner team
+- Integration method
+- Field coverage
+- Application-level risk profile
+- App Owner scoped access behavior
 
-## 10-Minute Demo
+### 6. Admin: Platform Configuration
 
-### 1. Establish The Problem
+Click path:
+
+```text
+Admin
+```
 
 Talk track:
 
-- Enterprises are deploying AI copilots, RAG systems, and Agents quickly.
-- Risk teams need visibility into prompt injection, data leakage, unsafe tool use, unauthorized access, and model output risk.
-- Traditional application logs do not explain AI-specific behavior well enough.
+- Admin separates platform configuration from normal risk observation.
+- Platform Admin users can manage Policy Center, Application Setup, application credentials, ingestion audit, and User Access.
+- This keeps sensitive platform controls away from normal read-only users.
 
-### 2. Overview: Daily Risk Posture
+Point out:
+
+- Policy Center
+- Application Setup
+- Credential generation, rotation, and revocation
+- Ingestion audit
+- User Access
+
+Close:
+
+- The full path is: AI application call -> ingestion API -> risk rules -> call log -> risk event -> analytics and dashboards.
+- The current product is ready as a portfolio demo and product prototype; production use would require real authentication, tenant boundaries, credential rotation, and data-retention decisions.
+
+## 10-Minute Demo Flow
+
+### 1. Establish The Business Problem
+
+Talk track:
+
+- Enterprises are adopting copilots, RAG systems, and Agents quickly.
+- These systems introduce new operational risks: prompt injection, RAG contamination, sensitive data leakage, unsafe tool execution, unauthorized access, and abuse patterns.
+- Governance teams need more than raw logs. They need risk metrics, evidence, application-level views, and policy controls.
+
+### 2. Start With Overview
 
 Click path:
 
@@ -197,13 +215,37 @@ Overview
 
 Talk track:
 
-- AI RiskOps starts with an operational view.
-- The dashboard separates call volume from risk events and blocked actions.
-- It shows risk level trend, risk category distribution, top risky applications, and severe event snapshots.
-- The trend combines stacked severity volume with High+Severe Rate so leaders can see both event volume and risk mix.
-- The severe snapshot provides an entry point into Risk Events for detailed investigation.
+- This page is built for governance leaders and AI risk owners.
+- It gives a portfolio-level view across enterprise AI applications.
+- The charts are designed to answer: How much usage do we have, how much risk is being detected, what is being blocked, and which apps or categories are driving the risk?
 
-### 3. Risk Events: Human Review Workflow
+Demo actions:
+
+- Switch Daily / Monthly / Quarterly on Risk Level Trend.
+- Point to High+Severe Rate and explain it as risk mix, not only volume.
+- Open the Severe Event Snapshot entry point into Risk Events.
+
+### 3. Use Risk Analytics To Explain Drivers
+
+Click path:
+
+```text
+Risk Analytics
+```
+
+Talk track:
+
+- Risk Analytics is the bridge between a management dashboard and detailed event investigation.
+- It helps analysts explain why metrics moved.
+- The page supports application, category, rule, environment, user role, and data-type analysis.
+
+Demo actions:
+
+- Apply a filter.
+- Open an application drill-down if available.
+- Use drill-through into Risk Events.
+
+### 4. Investigate A Severe Event
 
 Click path:
 
@@ -213,35 +255,18 @@ Risk Events
 
 Talk track:
 
-- AI risk operations requires a workflow, not only alerts.
-- Each event has a review status, owner, SLA, and recommended action.
-- This prevents risks from becoming a passive dashboard nobody owns.
+- This page is for security, risk, and compliance teams.
+- It intentionally avoids becoming a full case-management workflow.
+- The product records and explains risk, while downstream remediation can happen in existing governance or ticketing systems.
 
-Demo action:
+Demo actions:
 
-- Search for a rule ID such as `PI-001` or an application name.
-- Apply a risk level or human review filter.
-- Clear filters to return to the full list.
-- Select a pending event.
-- Click Take Ownership.
-- Then click Confirm Risk or Mark False Positive.
+- Search for a rule such as `PI-001`, `DLP-001`, `ACCESS-001`, or `TOOL-001`.
+- Filter by Severe or High.
+- Select a severe event.
+- Walk through matched rules, evidence, affected asset, recommended action, linked call log, owner, SLA, and review status.
 
-Explain:
-
-- `System Action` is what the platform did automatically.
-- `Human Review` is what the security or risk team has decided after review.
-
-### 4. Evidence Chain
-
-Click an event with a tool call or prompt injection.
-
-Talk track:
-
-- The event explains why the risk was detected.
-- Evidence is preserved for audit and communication with business owners.
-- This is critical for explainability and trust.
-
-### 5. Call Logs: Audit Backbone
+### 5. Trace To The Source Call
 
 Click path:
 
@@ -251,138 +276,158 @@ Call Logs
 
 Talk track:
 
-- Call logs are the audit foundation.
-- They preserve the model request, response, RAG context, tool call, risk score, action, and event linkage.
-- This makes the risk event traceable.
+- The event is not an isolated alert.
+- It is connected to the original model call, context, output, and tool action.
+- This lets teams explain the event to the application owner and tune policy only when evidence supports it.
 
-### 6. Policy Simulation: Simulate A New Risk
-
-Click path:
-
-```text
-Policy Center -> Policy Simulation
-```
-
-Demo action:
-
-- Choose `RAG Knowledge Base: Indirect Prompt Injection` or `Finance Agent: High-Risk Payment Approval`.
-- Click `Run Detection`.
-- Explain the risk score, matched rules, evidence, and recommended action.
-- Click `Simulate Ingestion & Generate Event`.
-
-Talk track:
-
-- This simulates what would happen when a real AI app sends a call through AI RiskOps.
-- The platform creates a call log and, when action is not allow, generates a risk event.
-- Policy Simulation is an internal testing capability inside Policy Center, not a primary production navigation module.
-
-### 7. Show The Generated Call Log
-
-The app should navigate to:
-
-```text
-Call Logs
-```
-
-Talk track:
-
-- The new call is now visible in the audit trail.
-- If the action was not allow, it is linked to a newly generated risk event.
-
-### 8. Show Policy Governance
+### 6. Show Application Scope
 
 Click path:
 
 ```text
-Policy Center
+Applications
 ```
 
 Talk track:
 
-- The policy layer controls how AI RiskOps behaves.
-- Different applications can use different strategy templates.
-- Enterprise baseline rules should always remain active even if an application strategy is disabled.
+- A governance leader can see the global portfolio.
+- An app owner should only see assigned applications.
+- The prototype demonstrates this with User Profile switching and application-scoped API responses.
 
-Point out:
+Demo actions:
 
-- Strategy templates
-- Rule base score
-- Default action
-- Manual review false-positive rate
-- Action matrix
+- Switch to App Owner profile.
+- Show that Overview, Risk Analytics, Risk Events, Call Logs, and Applications are scoped to assigned apps.
+- Switch back to Platform Admin.
 
-### 9. Show Application Onboarding
+### 7. Show Admin Configuration
 
 Click path:
 
 ```text
-Application Onboarding
+Admin
 ```
 
 Talk track:
 
-- Application teams can start with proxy, SDK, log API, or Agent tool audit.
-- The OpenAI-compatible proxy is the recommended path for central enforcement.
-- Metadata-only and redaction modes can support sensitive environments.
-- Selecting an app shows whether Test and Production are ready, which fields are captured, and which validation checks are still missing.
+- Platform Admin is where the system itself is configured.
+- Policy Center controls templates and rules.
+- Application Setup controls onboarding, credentials, and validation checks.
+- User Access controls who can view or manage platform capabilities.
 
-### 10. Close With Roadmap
+Demo actions:
+
+- Open Policy Center and explain rule templates.
+- Open Application Setup and show credential / validation status.
+- Open ingestion audit to show records of accepted and rejected ingestion requests.
+- Open User Access and explain capability-based access instead of hard-coded job roles.
+
+### 8. Close With Delivery Scope
 
 Talk track:
 
-- Current prototype is an in-memory product demo.
-- Next phases would add persistence, real proxy integration, application keys, rule versioning, workflow audit logs, and enterprise deployment controls.
+- The prototype is online and API-backed.
+- It uses Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel.
+- The seeded dataset demonstrates scale with 5,000+ model calls and 620+ risk events.
+- The next production steps would be authentication, tenant isolation, credential rotation, and raw-data retention policy.
+
+## Technical Interview Track
+
+Use this section when the interviewer asks how the system is implemented.
+
+### Architecture
+
+```text
+LLM / RAG / Agent application
+-> model-call ingestion API
+-> policy and risk rule evaluation
+-> call log persistence
+-> risk event persistence
+-> matched rule and evidence records
+-> analytics aggregation APIs
+-> scoped frontend views
+```
+
+### Backend Highlights
+
+- Next.js API routes provide scoped reads and write paths.
+- Prisma connects the app to Neon Postgres.
+- Model-call ingestion can create Call Logs, Risk Events, matched evidence, ingestion audit records, and Application Setup validation updates.
+- API responses use stable success/error envelopes.
+- Normal read APIs mask raw prompt, output, context, and tool content by default.
+
+### Frontend Highlights
+
+- Product surfaces are built in Next.js App Router with React and TypeScript.
+- Overview and Risk Analytics use API-backed aggregates.
+- Risk Events supports URL-persisted filters and event drill-through.
+- User Profile switching demonstrates access scope for Global User, App Owner, and Platform Admin.
+
+### Data And Metrics
+
+- Seeded demo dataset: 5,000+ model calls, 620+ risk events, and 5,000+ ingestion audit records.
+- Core metrics include Risk Event Rate, High+Severe Rate, Average Risk Score, Block Rate, Rule Hit Rate, and Log Coverage Score.
+- Top Risky Applications sort by Severe Count, then High Count, then Max Risk Score.
+- Human-reviewed false-positive rate should be based on completed review outcomes, not system guesses.
+
+### Quality And Deployment
+
+- GitHub Actions runs contract tests and build checks.
+- A risk status contract test prevents backend/frontend enum drift from breaking Risk Events.
+- Vercel hosts the public demo.
+- Neon Postgres stores persistent demo data.
 
 ## Common Questions
 
-### Is this only a manual scanner?
+### Is this a security scanner?
 
-No. The detection sandbox is a demo and rule-debugging tool. The target production path is automated integration through proxy, SDK, or log ingestion.
+Not exactly. AI RiskOps is an observability and risk operations layer. It records model-call activity, detects risk events, explains evidence, and helps teams understand and govern AI application risk.
+
+### Does it replace remediation or audit systems?
+
+No. The product intentionally avoids becoming a full audit, ticketing, or case-management platform. It helps teams find and explain risk, then existing governance or remediation systems can handle downstream workflow.
 
 ### Where does false-positive rate come from?
 
-The formal metric should come from completed human review or explicit business feedback.
+The formal metric should come from completed human review outcomes.
 
 ```text
-Human-reviewed false-positive rate = false_positive / (confirmed + false_positive + resolved + escalated)
+Human-reviewed false-positive rate =
+false_positive / (confirmed + false_positive + resolved + escalated)
 ```
 
-Pending and in-progress events should not enter the denominator.
+Pending and in-review events should not enter the denominator.
 
-### What happens if a strategy template is disabled?
+### What happens if a policy template is disabled?
 
-Disabled templates cannot be selected by newly onboarded applications. Existing bound applications should continue using the last effective version until migrated. Enterprise baseline rules should still apply.
-
-### Does AI RiskOps replace model safety controls?
-
-No. It complements model safety by adding enterprise-specific logging, policy, review, evidence, and governance workflows around AI applications.
+Disabled templates should not be assigned to newly onboarded applications. Existing applications should keep a stable last-effective policy until a Platform Admin migrates them. Enterprise baseline rules should still apply.
 
 ### Does this require sending private data to another model?
 
-Not necessarily. The first implementation can use deterministic local rules. Future LLM-as-judge features should be optional, scoped, and governed by data handling policy.
+Not necessarily. The first implementation can use deterministic rule evaluation and metadata-driven scoring. Future LLM-as-judge features should be optional, scoped, and governed by the enterprise data handling policy.
 
-### What is the difference between call logs and risk events?
+### What is the difference between Call Logs and Risk Events?
 
-Call logs are the raw audit trail of AI activity. Risk events are generated when the system detects a meaningful risk requiring visibility, action, or review.
+Call Logs are the source audit trail of AI activity. Risk Events are generated when the system detects a meaningful risk that requires visibility, action, or review.
+
+### Why have User Profiles instead of hard-coded roles?
+
+Companies often have teams that do not map cleanly to fixed job titles. AI RiskOps uses capability and scope concepts so a user can request or receive the level of access they need.
 
 ## Current Prototype Limitations
 
-- Data is mock or in-memory.
-- No database persistence.
-- No real authentication or RBAC.
-- No real gateway endpoint.
-- No real API key generation.
-- No streaming model proxy.
-- No persistent audit trail for status changes.
-- Detection rules are deterministic and early-stage.
+- User Profile switching is demo-mode access simulation, not production authentication.
+- The demo is single-tenant and should not be used for sensitive production data without tenant isolation.
+- Raw-content retention, masking, and deletion policy still need a production decision.
+- Application credentials and database credentials must be rotated before real sensitive data use.
+- The detection logic is deterministic and early-stage; richer semantic detection should be added carefully with data-governance controls.
 
 ## Suggested Next Roadmap
 
-1. Persist call logs and risk events.
-2. Add application keys and real app onboarding flow.
-3. Build an OpenAI-compatible proxy endpoint.
-4. Store review comments and status change audit history.
-5. Add rule versioning and policy publish workflow.
-6. Add filtering, search, and export.
-7. Add batch red-team testing and report generation.
-8. Add optional LLM judge for complex semantic cases.
+1. Add production authentication and session identity.
+2. Add tenant isolation and production authorization boundaries.
+3. Rotate setup-time secrets and finalize credential handling.
+4. Add API route tests for scoped reads and ingestion writes.
+5. Define production raw-content retention, masking, and deletion policy.
+6. Add policy versioning and publish workflow.
+7. Add optional LLM-assisted analysis for complex semantic risk cases.
