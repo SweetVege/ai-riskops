@@ -1885,17 +1885,27 @@ function RiskLevelTrendChart({ profile }: { profile: UserProfile }) {
     return () => controller.abort();
   }, [period, profile]);
 
+  const visibleTrendData = period === "Daily" ? trendData.slice(-30) : trendData;
   const maxTotal = Math.max(
-    ...trendData.map((item) => item.total),
+    ...visibleTrendData.map((item) => item.total),
     1,
   );
-  const ratePoints = trendData.map((item, index) => {
-    const x = ((index + 0.5) / trendData.length) * 100;
-    const y = 70 - item.highSevereRate * 1.2;
+  const highSevereRates = visibleTrendData.map((item) => item.highSevereRate);
+  const minHighSevereRate = highSevereRates.length ? Math.min(...highSevereRates) : 0;
+  const maxHighSevereRate = highSevereRates.length ? Math.max(...highSevereRates) : 0;
+  const rateRange = maxHighSevereRate - minHighSevereRate;
+  const rateChartTop = 16;
+  const rateChartBottom = 78;
+  const ratePoints = visibleTrendData.map((item, index) => {
+    const x = ((index + 0.5) / visibleTrendData.length) * 100;
+    const normalizedRate = rateRange === 0 ? 0.5 : (item.highSevereRate - minHighSevereRate) / rateRange;
+    const y = rateChartBottom - normalizedRate * (rateChartBottom - rateChartTop);
+    const showLabel = visibleTrendData.length <= 12 || index === 0 || index === visibleTrendData.length - 1 || index % 5 === 0;
     return {
       x,
-      y: Math.max(34, Math.min(54, y)),
+      y,
       rate: Math.round(item.highSevereRate),
+      showLabel,
     };
   });
   const linePoints = ratePoints.map((point) => `${point.x},${point.y}`).join(" ");
@@ -1929,7 +1939,7 @@ function RiskLevelTrendChart({ profile }: { profile: UserProfile }) {
           <div className="grid h-full place-items-center text-sm font-medium text-slate-500">Loading trend data...</div>
         ) : error ? (
           <div className="grid h-full place-items-center text-sm font-medium text-rose-600">{error}</div>
-        ) : trendData.length ? (
+        ) : visibleTrendData.length ? (
           <>
             <svg className="pointer-events-none absolute inset-x-0 top-8 z-10 h-24 w-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
               <polyline
@@ -1943,20 +1953,24 @@ function RiskLevelTrendChart({ profile }: { profile: UserProfile }) {
             <div className="pointer-events-none absolute inset-x-0 top-8 z-10 h-24">
               {ratePoints.map((point, index) => (
                 <div
-                  key={`${trendData[index].label}-${point.rate}`}
+                  key={`${visibleTrendData[index].label}-${point.rate}`}
                   className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1"
                   style={{ left: `${point.x}%`, top: `${point.y}%` }}
                 >
-                  <span className="rounded-full bg-white px-1.5 py-0.5 text-[10px] font-semibold leading-none text-sky-700 shadow-sm ring-1 ring-sky-100">
-                    {point.rate}%
-                  </span>
+                  {point.showLabel ? (
+                    <span className="rounded-full bg-white px-1.5 py-0.5 text-[10px] font-semibold leading-none text-sky-700 shadow-sm ring-1 ring-sky-100">
+                      {point.rate}%
+                    </span>
+                  ) : null}
                   <span className="h-2.5 w-2.5 rounded-full bg-sky-600 ring-2 ring-white" />
                 </div>
               ))}
             </div>
             <div className="absolute inset-x-0 bottom-0 grid h-56 grid-flow-col auto-cols-fr items-end">
-              {trendData.map((item) => {
+              {visibleTrendData.map((item, index) => {
                 const total = item.total;
+                const showBucketLabel =
+                  visibleTrendData.length <= 12 || index === 0 || index === visibleTrendData.length - 1 || index % 5 === 0;
                 const tooltip = `${item.label}
 Total events: ${total}
 Low: ${item.severity.low}
@@ -1965,11 +1979,11 @@ High: ${item.severity.high}
 Severe: ${item.severity.severe}
 High+Severe Rate: ${Math.round(item.highSevereRate)}%`;
                 return (
-                  <div key={item.label} className="flex min-w-0 flex-col items-center gap-2 px-3">
+                  <div key={item.label} className="flex min-w-0 flex-col items-center gap-2 px-1.5">
                     <div title={tooltip} className="relative h-40 w-full max-w-16">
                       <div className="absolute bottom-0 w-full" style={{ height: `${(total / maxTotal) * 100}%` }}>
                         {total ? (
-                          <span className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-full px-1 pb-1 text-xs font-semibold text-ink">
+                          <span className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-full px-1 pb-1 text-[11px] font-semibold text-ink">
                             {total}
                           </span>
                         ) : null}
@@ -1981,7 +1995,9 @@ High+Severe Rate: ${Math.round(item.highSevereRate)}%`;
                         </div>
                       </div>
                     </div>
-                    <span className="text-xs text-slate-500">{item.label}</span>
+                    <span className={`truncate text-[11px] text-slate-500 ${showBucketLabel ? "" : "opacity-0"}`}>
+                      {item.label}
+                    </span>
                   </div>
                 );
               })}
