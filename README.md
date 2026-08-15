@@ -58,7 +58,7 @@ Additional screenshots:
 ## Portfolio Highlights
 
 - Designed and built an enterprise AI risk operations prototype covering executive dashboards, risk analytics, event investigation, model call logs, application views, and admin configuration.
-- Implemented API-backed risk metrics and drill-down analysis for LLM, RAG, and Agent applications using 1,250+ seeded model calls and 140+ risk events.
+- Implemented API-backed risk metrics and drill-down analysis for LLM, RAG, and Agent applications using 5,000+ seeded model calls and 620+ risk events.
 - Integrated Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel to ship a working online demo with persistent backend data.
 
 ## Core Capabilities
@@ -209,7 +209,7 @@ Current online status:
 Ready for portfolio and product demo use:
 
 - Public Vercel demo with API-backed data.
-- Seeded operating dataset with 1,250+ model calls, 140+ risk events, and ingestion audit history.
+- Seeded operating dataset with 5,000+ model calls, 620+ risk events, and ingestion audit history.
 - Application credential generation, rotation, revocation, and one-time starter snippets.
 - Credential-authenticated model-call ingestion that creates Call Logs, Risk Events, matched rule evidence, ingestion audit records, and Application Setup validation updates.
 - Application-scoped views for App Owner demo profiles.

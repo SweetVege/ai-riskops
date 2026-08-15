@@ -2639,7 +2639,26 @@ Next step:
 
 - Push the repository to GitHub, configure Vercel with the Neon `DATABASE_URL`, and deploy the first online version.
 
-## 77. Decision Notes
+## 77. Launch Demo Dataset Scale-Up
+
+AI RiskOps now uses a larger seeded operating dataset for the online demo.
+
+Decision:
+
+- Keep the launch dataset synthetic and deterministic.
+- Increase the seeded dataset from 1,250+ model calls and 140+ risk events to 5,000+ model calls and 620+ risk events.
+- Avoid changing product logic or data models in this step; this is a lightweight demo-scale improvement before real data ingestion is hardened.
+
+Completed:
+
+- Updated the scaled seed generator targets in `prisma/seed.mjs`.
+- Updated README and delivery summary dataset descriptions.
+
+Next step:
+
+- After confirmation, run `pnpm run db:reset` against the Neon demo database so the online product reflects the larger dataset.
+
+## 78. Decision Notes
 
 - Product name remains AI RiskOps.
 - User-facing product content should be displayed in English.

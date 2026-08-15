@@ -219,8 +219,8 @@ const ingestionRequestAudits = [
 ];
 
 const generatedDataset = generateScaledDemoDataset({
-  callLogTarget: 1250,
-  riskEventTarget: 145,
+  callLogTarget: 5000,
+  riskEventTarget: 620,
   startDate: new Date("2025-07-01T08:00:00.000Z"),
   endDate: new Date("2026-07-08T18:00:00.000Z"),
 });
