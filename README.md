@@ -1,16 +1,77 @@
 # AI RiskOps
 
-AI RiskOps is an enterprise AI application risk operations platform for LLM, RAG, Copilot, and Agent applications.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-ai--riskops.vercel.app-111827?style=for-the-badge)](https://ai-riskops.vercel.app)
+[![CI](https://img.shields.io/github/actions/workflow/status/SweetVege/AI-RiskOps/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/SweetVege/AI-RiskOps/actions)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Postgres](https://img.shields.io/badge/Postgres-Neon-00E599?style=for-the-badge&logo=postgresql&logoColor=white)](https://neon.tech)
 
-It helps AI governance, security, risk, compliance, and internal AI application teams monitor AI application risk posture, inspect risk events, analyze risk drivers, review model call logs, manage detection policies, configure application ingestion, and control platform access.
+AI RiskOps is an enterprise AI application risk operations platform for monitoring LLM, RAG, Copilot, and Agent applications.
 
-Live demo:
+It gives AI governance, security, risk, compliance, and internal AI application teams a shared place to measure AI application risk posture, investigate risk events, analyze risk drivers, inspect model call logs, and configure platform policies.
 
-```text
-https://ai-riskops.vercel.app
-```
+**Live demo:** [https://ai-riskops.vercel.app](https://ai-riskops.vercel.app)
+
+**Repository:** [https://github.com/SweetVege/AI-RiskOps](https://github.com/SweetVege/AI-RiskOps)
+
+## At A Glance
+
+| Area | What was built |
+|---|---|
+| Product scope | AI risk overview, risk analytics, event investigation, call logs, applications, and admin configuration |
+| Demo data | 5,000+ seeded model calls, 620+ risk events, and 5,000+ ingestion audit records |
+| Backend | Scoped APIs, analytics aggregation, model-call ingestion, credential validation, and permission simulation |
+| Deployment | Next.js + Prisma + Neon Postgres + GitHub Actions + Vercel |
+| Demo mode | User Profile switching simulates access scope; it is not production authentication |
+
+## Product Preview
 
 ![AI RiskOps Overview](docs/assets/overview.jpg)
+
+Additional product surfaces:
+
+| Risk Analytics | Risk Event Workbench |
+|---|---|
+| ![Risk Analytics](docs/assets/risk-analytics.jpg) | ![Risk Event Workbench](docs/assets/risk-events.jpg) |
+
+## Demo Guide
+
+Use the live demo to review the main product surfaces:
+
+1. Open **Overview** to review enterprise AI risk posture, severity trend, risk category distribution, top risky applications, and severe event snapshots.
+2. Open **Risk Analytics** to analyze risk drivers by application, category, matched rule, environment, and system action.
+3. Open **Risk Events** to inspect matched rules, evidence, system action, review status, SLA, owner, and event-level explanation.
+4. Open **Call Logs** to review model-call records and linked risk events.
+5. Open **Applications** to compare application-level risk profiles and onboarding status.
+6. Switch to **Platform Admin** and open **Admin** to review Policy Center, Application Setup, credentials, ingestion audit, and User Access.
+
+Recommended profiles:
+
+- **Global User:** global read access across product surfaces.
+- **App Owner:** assigned-application view, useful for validating app-scoped data access.
+- **Platform Admin:** full demo access to policy, setup, credentials, and user access configuration.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  A["LLM / RAG / Agent applications"] --> B["Model-call ingestion API"]
+  B --> C["Policy and risk rule evaluation"]
+  C --> D["Call logs"]
+  C --> E["Risk events"]
+  E --> F["Matched rules and evidence"]
+  D --> G["Risk analytics APIs"]
+  E --> G
+  G --> H["Overview, Risk Analytics, Risk Events, Call Logs, Applications, Admin"]
+  I["Application credentials"] --> B
+  J["User profile / access scope"] --> H
+```
+
+## Product Outcomes
+
+- Designed and built an enterprise AI risk operations prototype covering executive dashboards, risk analytics, event investigation, model call logs, application views, and admin configuration.
+- Implemented API-backed risk metrics and drill-down analysis for LLM, RAG, and Agent applications using 5,000+ seeded model calls and 620+ risk events.
+- Launched a working online demo with persistent Neon Postgres data, scoped backend APIs, GitHub Actions CI, and Vercel deployment.
 
 ## Product Positioning
 
@@ -31,35 +92,6 @@ The first version supports three main operating views:
 - Applications inventory and application-level risk profiles
 - Admin surfaces for Policy Center, Application Setup, application credentials, ingestion audit, and User Access
 - Backend APIs for scoped reads, analytics aggregation, model-call ingestion, credential validation, and permission management
-
-## Demo Walkthrough
-
-Use the live demo to review the main product surfaces:
-
-```text
-https://ai-riskops.vercel.app
-```
-
-Recommended walkthrough:
-
-1. Open **Overview** to review enterprise AI risk posture, severity trend, risk category distribution, top risky applications, and severe event snapshots.
-2. Open **Risk Analytics** to analyze risk drivers by application, category, rule, environment, and system action.
-3. Open **Risk Events** to inspect matched rules, evidence, system action, review status, SLA, and event-level explanation.
-4. Open **Call Logs** to review model-call records and linked risk events.
-5. Open **Applications** to compare application-level risk profiles and onboarding status.
-6. Open **Admin** surfaces as Platform Admin to review Policy Center, Application Setup, credentials, ingestion audit, and user access configuration.
-
-Additional screenshots:
-
-![Risk Analytics](docs/assets/risk-analytics.jpg)
-
-![Risk Event Workbench](docs/assets/risk-events.jpg)
-
-## Portfolio Highlights
-
-- Designed and built an enterprise AI risk operations prototype covering executive dashboards, risk analytics, event investigation, model call logs, application views, and admin configuration.
-- Implemented API-backed risk metrics and drill-down analysis for LLM, RAG, and Agent applications using 5,000+ seeded model calls and 620+ risk events.
-- Integrated Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel to ship a working online demo with persistent backend data.
 
 ## Core Capabilities
 

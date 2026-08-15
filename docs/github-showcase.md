@@ -37,11 +37,23 @@ vercel
 
 AI RiskOps is an enterprise AI application risk operations platform for LLM, RAG, and Agent applications. It provides API-backed executive risk dashboards, risk driver analytics, event investigation, model call logs, application-level risk profiles, and admin configuration for policies, application setup, credentials, ingestion audit, and user access.
 
+Live demo:
+
+```text
+https://ai-riskops.vercel.app
+```
+
+Repository:
+
+```text
+https://github.com/SweetVege/AI-RiskOps
+```
+
 ## Three Resume Bullets
 
 - Owned the end-to-end product design and build of AI RiskOps, defining users, permissions, data scope, risk metrics, and phased roadmap for enterprise AI application risk monitoring.
-- Built core product surfaces across risk dashboards, risk analytics, event investigation, call logs, applications, and admin configuration, using seeded model-call and risk-event data to demonstrate drill-down analysis and LLM-style insight generation.
-- Launched the prototype with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel, enabling persistent API-backed demo data and online product access.
+- Built core product surfaces across risk dashboards, risk analytics, event investigation, call logs, applications, and admin configuration, using 5,000+ model calls and 620+ risk events to demonstrate drill-down analysis and LLM-style insight generation.
+- Launched the prototype with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel, enabling persistent API-backed demo data, scoped access simulation, and online product access.
 
 ## Demo Talking Points
 
