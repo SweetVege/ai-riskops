@@ -49,6 +49,12 @@ Repository:
 https://github.com/SweetVege/AI-RiskOps
 ```
 
+Interview prep:
+
+```text
+docs/interview-notes.md
+```
+
 ## Three Resume Bullets
 
 - Owned the end-to-end product design and build of AI RiskOps, defining users, permissions, data scope, risk metrics, and phased roadmap for enterprise AI application risk monitoring.

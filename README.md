@@ -258,6 +258,7 @@ Required before real sensitive production data:
 
 - [Project Delivery Summary](docs/project-delivery-summary.md)
 - [Living PRD](docs/living-prd.md)
+- [Interview Notes](docs/interview-notes.md)
 - [Backend Readiness](docs/backend-readiness.md)
 - [API Contract](docs/api-contract.md)
 - [Real Data Ingestion Guide](docs/real-data-ingestion-guide.md)
