@@ -47,12 +47,10 @@ Ready:
 
 Still required before real sensitive production data:
 
-- Rotate setup-time database credentials.
-- Update `DATABASE_URL` in Vercel after credential rotation.
-- Update local `.env` after credential rotation.
 - Demo User Profile switching is still the human access mechanism.
 - Decide production raw-content masking, retention, and deletion policy.
 - Add production authentication and authorization boundaries before any real multi-user deployment.
+- Keep database and application credentials in secret stores and rotate them after any access change or suspected exposure.
 
 ## 3. Minimum GitHub Steps
 
@@ -122,12 +120,11 @@ Supabase can be reconsidered later if the product needs built-in auth, storage, 
 
 ## 8. Immediate Next Step
 
-1. Rotate the Neon database password before ingesting real sensitive data.
-2. Update Vercel `DATABASE_URL` after credential rotation.
-3. Update local `.env` after credential rotation.
-4. Re-run production smoke checks against:
+1. Re-run production smoke checks against:
    - `https://ai-riskops.vercel.app`
    - `https://ai-riskops.vercel.app/api/overview/summary`
+2. Add production authentication and authorization planning.
+3. Define production raw-content masking, retention, and deletion policy.
    - `https://ai-riskops.vercel.app/api/applications`
    - `https://ai-riskops.vercel.app/api/risk-events`
 5. Keep the public deployment clearly positioned as demo mode until production authentication replaces User Profile switching.

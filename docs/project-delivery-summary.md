@@ -103,9 +103,9 @@ Verified production API surfaces:
 
 AI RiskOps - AI Application Risk Operations Platform
 
-- Owned the end-to-end design and build of AI RiskOps, defining product positioning, users, permissions, risk metrics, and phased roadmap for enterprise LLM, RAG, and Agent application risk monitoring.
+- Owned the end-to-end design and build of AI RiskOps, defining product positioning, user profiles, permissions, risk metrics, and roadmap for enterprise LLM, RAG, and Agent application risk monitoring.
 - Built 6 core product areas across executive dashboards, risk analytics, event investigation, call logs, application views, and admin configuration, using 5,000+ seeded model calls and 620+ risk events to demonstrate drill-down analysis and LLM-style insight generation.
-- Shipped a production-ready prototype with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel, enabling persistent API-backed demo data, policy simulation foundation, evidence mapping, and application-scoped access.
+- Shipped an online prototype with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel, enabling persistent API-backed demo data, evidence mapping, application-scoped access, and credential-authenticated ingestion.
 
 ## Interview Pitch
 
@@ -116,7 +116,7 @@ The first version focuses on making risk visible and explainable. Governance lea
 ## Next Priorities
 
 1. Add basic production authentication to replace demo profile switching.
-2. Rotate setup-time database credentials before ingesting any real sensitive data.
-3. Add lightweight tests for core API routes and permission-scoped reads.
+2. Add tenant isolation and production authorization boundaries.
+3. Add lightweight tests for core API routes, scoped reads, and ingestion writes.
 4. Decide production raw-content retention, masking, and deletion policy.
 5. Add a production deployment banner or demo-mode indicator if the public URL remains accessible.

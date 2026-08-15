@@ -419,14 +419,14 @@ Companies often have teams that do not map cleanly to fixed job titles. AI RiskO
 - User Profile switching is demo-mode access simulation, not production authentication.
 - The demo is single-tenant and should not be used for sensitive production data without tenant isolation.
 - Raw-content retention, masking, and deletion policy still need a production decision.
-- Application credentials and database credentials must be rotated before real sensitive data use.
+- Application credentials should be managed in source-system secret stores before real sensitive data use.
 - The detection logic is deterministic and early-stage; richer semantic detection should be added carefully with data-governance controls.
 
 ## Suggested Next Roadmap
 
 1. Add production authentication and session identity.
 2. Add tenant isolation and production authorization boundaries.
-3. Rotate setup-time secrets and finalize credential handling.
+3. Finalize application credential handling and source-system secret-management guidance.
 4. Add API route tests for scoped reads and ingestion writes.
 5. Define production raw-content retention, masking, and deletion policy.
 6. Add policy versioning and publish workflow.

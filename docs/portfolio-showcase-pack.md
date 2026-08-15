@@ -20,7 +20,7 @@ AI RiskOps - AI Application Risk Operations Platform
 
 - Owned the end-to-end design and build of AI RiskOps, defining product positioning, user profiles, permissions, risk metrics, and roadmap for enterprise LLM, RAG, and Agent application risk monitoring.
 - Built 6 core product areas across executive dashboards, risk analytics, event investigation, call logs, application views, and admin configuration, using 5,000+ seeded model calls and 620+ risk events to demonstrate drill-down analysis and LLM-style insight generation.
-- Shipped a production-ready prototype with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel, enabling persistent API-backed demo data, evidence mapping, application-scoped access, and credential-authenticated ingestion.
+- Shipped an online prototype with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel, enabling persistent API-backed demo data, evidence mapping, application-scoped access, and credential-authenticated ingestion.
 
 ## 30-Second Pitch
 
@@ -152,7 +152,7 @@ Technically, I moved the project from frontend-only prototype to an API-backed o
 
 Recommended answer:
 
-The current version is ready as a portfolio demo and product prototype. Before handling real sensitive enterprise data, I would add production authentication, tenant boundaries, stronger authorization, raw-content retention controls, secret-management guidance for application credentials, API tests for scoped reads, and operational monitoring.
+The current version is ready as a portfolio demo and product prototype. Before handling real sensitive enterprise data, I would add production authentication, tenant boundaries, stronger authorization, raw-content retention controls, secret-management guidance for application credentials, API tests for scoped reads and ingestion writes, and operational monitoring.
 
 ## Suggested Sharing Format
 

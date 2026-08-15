@@ -57,9 +57,9 @@ docs/interview-notes.md
 
 ## Three Resume Bullets
 
-- Owned the end-to-end product design and build of AI RiskOps, defining users, permissions, data scope, risk metrics, and phased roadmap for enterprise AI application risk monitoring.
-- Built core product surfaces across risk dashboards, risk analytics, event investigation, call logs, applications, and admin configuration, using 5,000+ model calls and 620+ risk events to demonstrate drill-down analysis and LLM-style insight generation.
-- Launched the prototype with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel, enabling persistent API-backed demo data, scoped access simulation, and online product access.
+- Owned the end-to-end design and build of AI RiskOps, defining product positioning, user profiles, permissions, risk metrics, and roadmap for enterprise LLM, RAG, and Agent application risk monitoring.
+- Built 6 core product areas across executive dashboards, risk analytics, event investigation, call logs, application views, and admin configuration, using 5,000+ seeded model calls and 620+ risk events to demonstrate drill-down analysis and LLM-style insight generation.
+- Shipped an online prototype with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel, enabling persistent API-backed demo data, evidence mapping, application-scoped access, and credential-authenticated ingestion.
 
 ## Demo Talking Points
 

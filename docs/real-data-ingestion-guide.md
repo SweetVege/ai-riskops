@@ -258,7 +258,7 @@ All success and failure paths write an ingestion audit record when possible.
 
 Before sending any real sensitive data:
 
-- Rotate setup-time Neon database credentials and update Vercel `DATABASE_URL`.
+- Keep Neon database credentials in Vercel and local secret stores only; rotate them after any setup exposure or access change.
 - Keep application credentials in a secret manager, not in source code or client-side bundles.
 - Use HTTPS only.
 - Start with `environment: "Test"` and a small sample of 10 to 20 calls.

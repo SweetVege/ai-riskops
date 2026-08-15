@@ -303,7 +303,7 @@ My next priorities would be:
 Use these when asked to summarize impact:
 
 - Built a working online AI risk operations platform across 6 product areas: Overview, Risk Analytics, Risk Events, Call Logs, Applications, and Admin.
-- Designed the product positioning, user profiles, permission model, metrics framework, and phased roadmap.
+- Designed the product positioning, user profiles, permission model, metrics framework, and roadmap.
 - Implemented API-backed data flows with Next.js, Prisma, Neon Postgres, GitHub Actions, and Vercel.
 - Seeded 5,000+ model calls and 620+ risk events to demonstrate realistic risk analytics, drill-down investigation, and application-scoped access.
 - Verified real ingestion smoke tests that create persistent Call Logs, Risk Events, matched evidence, ingestion audit records, and Application Setup validation updates.
